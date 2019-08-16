@@ -15,17 +15,20 @@ public class Cerver : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		_cubes = GameObject.FindGameObjectsWithTag("Cubo");
-		if (Server) {
+    _cubesById = new GameObject[10];
 			int counter = 0;
 			foreach (GameObject cube in _cubes) {
-				cube.AddComponent<Rigidbody>();
-				cube.GetComponent<CubeClass>().Id = counter;
-				_cubesById[counter] = cube;
-				counter++;
-				print(counter);
-			}
+      if (Server)
+      {
+        cube.AddComponent<Rigidbody>();
+      }
+      cube.GetComponent<CubeClass>().Id = counter;
+      _cubesById[counter] = cube;
+      counter++;
+      print(counter);
+			
 		}
-		string sendIp = "127.0.0.1";
+		string sendIp = "10.17.64.144";
 		int sendPort = 11000;
 		int receivePort = 11000;
  
