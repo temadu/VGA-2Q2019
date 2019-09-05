@@ -83,7 +83,7 @@ public sealed class PacketPrusecor {
 				break;
 		}
 
-		_connection.Send(p);
+		_connection.Send(p.ToString());
 	}
 
 	public void SubscribeToStrim(int topic, StrimObserver obs) {

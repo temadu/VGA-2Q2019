@@ -16,4 +16,9 @@ public class Pucket {
         Data = data;
         Ack = ack;
     }
+
+//    topic, ack, order, data
+    public override string ToString() {
+        return Topic + "," + Ack + "," + Order + "," + Data;
+    }
 }

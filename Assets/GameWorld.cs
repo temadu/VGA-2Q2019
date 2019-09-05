@@ -7,11 +7,9 @@ public class GameWorld : MonoBehaviour,StrimObserver{
     private GameObject[] _cubes;
     private GameObject[] _cubesById;
 
-    private PacketPrusecor _pp;
+    private PacketPrusecor _pp = PacketPrusecor.Instance;
 
     private void Start() {
-        
-        
         _pp.SubscribeToStrim(Pucket.Snapshot,this);
         _cubes = GameObject.FindGameObjectsWithTag("Cubo");
         _cubesById = new GameObject[10];
@@ -31,7 +29,7 @@ public class GameWorld : MonoBehaviour,StrimObserver{
 
     public void Update() {
         string positions = "";
-
+        _pp.Update();
 //		if (Input.GetKeyDown(KeyCode.Return)) {
         if (Server) {
             foreach (var cube in _cubes) {
