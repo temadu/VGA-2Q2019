@@ -70,18 +70,20 @@ public sealed class PacketPrusecor {
 	}
 
 	public void CreatePukcet(string data, int topic) {
+		Pucket p = null;
 		switch (topic) {
 			case Pucket.Snapshot:
-				_unrelisbasle.CreatePacket(data, topic);
+				p =_unrelisbasle.CreatePacket(data, topic);
 				break;
 			case Pucket.Input:
-				_relasibFast.CreatePacket(data, topic);
+				p =_relasibFast.CreatePacket(data, topic);
 				break;
 			case Pucket.Connection:
-				_reliabelSlow.CreatePacket(data, topic);
+				p =_reliabelSlow.CreatePacket(data, topic);
 				break;
 		}
 
+		_connection.Send(p);
 	}
 
 	public void SubscribeToStrim(int topic, StrimObserver obs) {

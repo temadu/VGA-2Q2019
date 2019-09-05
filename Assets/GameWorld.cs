@@ -40,19 +40,20 @@ public class GameWorld : MonoBehaviour,StrimObserver{
                 positions += cube.GetComponent<CubeClass>().Id + "," + pos.x + "," + pos.y + "," + pos.z + "," + rot.w +
                              "," + rot.x + "," + rot.y + "," + rot.z + "\n";
             }
-
+            _pp.CreatePukcet(positions,Pucket.Snapshot);
         }
-        _pp.CreatePukcet(positions,Pucket.Snapshot);
-        
+
     }
 
 
     public void HandleUpdate(string message) {
-        Debug.Log(message);
-        string[] cubes = message.Split('\n');
-        foreach (string c in cubes) {
-            string[] newPos = c.Split(',');
-            _cubesById[int.Parse(newPos[0])].gameObject.transform.position = new Vector3 (float.Parse(newPos[1]), float.Parse(newPos[2]), float.Parse(newPos[3]));
+        if (!Server) {   
+            Debug.Log(message);
+            string[] cubes = message.Split('\n');
+            foreach (string c in cubes) {
+                string[] newPos = c.Split(',');
+                _cubesById[int.Parse(newPos[0])].gameObject.transform.position = new Vector3 (float.Parse(newPos[1]), float.Parse(newPos[2]), float.Parse(newPos[3]));
+            }
         }
     }
 }

@@ -31,13 +31,15 @@ public class Strim {
 		}
 	}
 
-	public void CreatePacket(string data, int topic, bool ack=false) {
+	public Pucket CreatePacket(string data, int topic, bool ack=false) {
 		Pucket q = new Pucket(topic, _order++, data, ack);
 		if (ack) {
 			_acks.Add(q);
 		} else {
 			_puckets.Add(q);
 		}
+
+		return q;
 	}
 
 	public void addObserver(StrimObserver obs) {
