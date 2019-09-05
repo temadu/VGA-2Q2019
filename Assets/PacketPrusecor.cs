@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using UnityEditorInternal.VersionControl;
+﻿using DefaultNamespace;
 using UnityEngine;
 
-public class PacketPrusecor : MonoBehaviour {
+public sealed class PacketPrusecor {
+	
+	private static readonly PacketPrusecor INSTANCE = new PacketPrusecor();
 //	private List<Strim> _unreliabables; //para cada user
 //	private List<Strim> _reliablesSlow;
 //	private List<Strim> _relaibelsFast;
@@ -16,7 +15,7 @@ public class PacketPrusecor : MonoBehaviour {
 	private UdpConnection _connection;
 
 	// Use this for initialization
-	private void Start () {
+	private PacketPrusecor() {
 //		_unreliabables= new List<Strim>();
 //		_relaibelsFast = new List<Strim>();
 //		_reliablesSlow = new List<Strim>();
@@ -33,39 +32,71 @@ public class PacketPrusecor : MonoBehaviour {
 		_connection = new UdpConnection();
 		_connection.StartConnection(sendIp, sendPort, receivePort);
 	}
+
+	public static PacketPrusecor Instance {
+		get { return INSTANCE; }
+	}
+	
+	
 	
 	// Update is called once per frame
-	private void Update () {
+	
+	// cada message va a ser topic, ack, order, data
+	// topic 0 unr
+	// topic 1 unr
+	// topic 2 rel
+	// topic 3 rel
+	// topic 4 rel-slow
+	public void Update () {
 		foreach (var message in _connection.getMessages()) {
 			Debug.Log(message);
 			string[] splited = message.Split(',');
-			if (int.Parse(splited[0]) == 0) {
-				_unrelisbasle.ReceivePacket(new Strim.Pucket()); //ver como verga hacer un pucket			
-			} else if (int.Parse(splited[0]) == 1) {
-				
-			} else if (int.Parse(splited[0]) == 2)
-	
-			{
-				
+			switch (int.Parse(splited[0])) {
+				case Pucket.Snapshot:
+					_unrelisbasle.ReceivePacket(new Pucket(int.Parse(splited[1]), long.Parse(splited[2]), splited[3],
+						bool.Parse(splited[4])));
+					break;
+				case Pucket.Input:
+					_relasibFast.ReceivePacket(new Pucket(int.Parse(splited[1]), long.Parse(splited[2]), splited[3],
+						bool.Parse(splited[4])));
+					break;
+				case Pucket.Connection:
+					// cada 1 segundo hacer if
+					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[1]), long.Parse(splited[2]), splited[3],
+						bool.Parse(splited[4])));
+					break;
 			}
-			
-		}
-		
-		
-	}
-
-	private class Pucket {
-		public bool Ack;
-		public int Topic;
-		public int Order;
-		public string Data;
-
-		Pucket(int topic, int order, string data, bool ack) {
-			Ack = ack;
-			Topic = topic;
-			Order = order;
-			Data = data;
 		}
 	}
+
+	public void CreatePukcet(string data, int topic) {
+		switch (topic) {
+			case Pucket.Snapshot:
+				_unrelisbasle.CreatePacket(data, topic);
+				break;
+			case Pucket.Input:
+				_relasibFast.CreatePacket(data, topic);
+				break;
+			case Pucket.Connection:
+				_reliabelSlow.CreatePacket(data, topic);
+				break;
+		}
+
+	}
+
+	public void SubscribeToStrim(int topic, StrimObserver obs) {
+		switch (topic) {
+			case Pucket.Snapshot:
+				_unrelisbasle.addObserver(obs);
+				break;
+			case Pucket.Input:
+				_relasibFast.addObserver(obs);
+				break;
+			case Pucket.Connection:
+				_reliabelSlow.addObserver(obs);
+				break;
+		}
+	}
+
 }
 

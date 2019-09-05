@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ConstrainedExecution;
+using DefaultNamespace;
 using UnityEngine;
 
 public class Strim {
 	private long _order = 0L;
-	
-	// private List observers
+
+	private List<StrimObserver> _observers;
 	
 	private List<Pucket> _puckets;
 	private List<Pucket> _acks;
@@ -23,7 +24,7 @@ public class Strim {
 		if (p.Ack) {
 			_puckets = _puckets.Where(pq => pq.Order > p.Order).ToList();
 		} else {
-			//observers (p.data)
+			_observers.ForEach(obs=> obs.HandleUpdate(p.Data));
 			if (_reliabilaite) { //crear ack
 				CreatePacket(p.Order.ToString(), p.Topic, true);
 			}
@@ -39,23 +40,13 @@ public class Strim {
 		}
 	}
 
+	public void addObserver(StrimObserver obs) {
+		_observers.Add(obs);
+	}
+
 	public List<Pucket> GetPockets() {
 		List<Pucket> aux = _acks.Concat(_puckets).ToList();
 		_acks.Clear();
 		return aux;
-	}
-	
-	public class Pucket {
-		public int Topic;
-		public bool Ack;
-		public long Order;
-		public string Data;
-
-		public Pucket(int topic, long order, string data, bool ack) {
-			Topic = topic;
-			Order = order;
-			Data = data;
-			Ack = ack;
-		}
 	}
 }
