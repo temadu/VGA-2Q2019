@@ -49,8 +49,8 @@ public class GameWorld : MonoBehaviour,StrimObserver{
             Debug.Log(message);
             string[] cubes = message.Split('\n');
             foreach (string c in cubes) {
-                string[] newPos = c.Split(',');
-                string[] pos = newPos[3].Split(';');
+                if(c.Length == 0) continue;
+                string[] pos = c.Split(';');
                 _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3 (float.Parse(pos[1]), float.Parse(pos[2]), float.Parse(pos[3]));
             }
         }

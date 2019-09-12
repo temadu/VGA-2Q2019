@@ -53,17 +53,17 @@ public sealed class PacketPrusecor {
 			string[] splited = message.Split(',');
 			switch (int.Parse(splited[0])) {
 				case Pucket.Snapshot:
-					_unrelisbasle.ReceivePacket(new Pucket(int.Parse(splited[1]), long.Parse(splited[2]), splited[3],
-						bool.Parse(splited[4])));
+					_unrelisbasle.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
+						bool.Parse(splited[1])));
 					break;
 				case Pucket.Input:
-					_relasibFast.ReceivePacket(new Pucket(int.Parse(splited[1]), long.Parse(splited[2]), splited[3],
-						bool.Parse(splited[4])));
+					_relasibFast.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
+						bool.Parse(splited[1])));
 					break;
 				case Pucket.Connection:
 					// cada 1 segundo hacer if
-					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[1]), long.Parse(splited[2]), splited[3],
-						bool.Parse(splited[4])));
+					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
+						bool.Parse(splited[1])));
 					break;
 			}
 		}
