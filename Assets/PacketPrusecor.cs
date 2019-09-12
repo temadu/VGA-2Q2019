@@ -1,4 +1,4 @@
-﻿using DefaultNamespace;
+using DefaultNamespace;
 using UnityEngine;
 
 public sealed class PacketPrusecor {
@@ -86,7 +86,7 @@ public sealed class PacketPrusecor {
 		_connection.Send(p.ToString());
 	}
 
-	public void SubscribeToStrim(int topic, StrimObserver obs) {
+	public void SubscribeToTopic(int topic, StrimObserver obs) {
 		switch (topic) {
 			case Pucket.Snapshot:
 				_unrelisbasle.addObserver(obs);

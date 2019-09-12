@@ -10,7 +10,7 @@ public class GameWorld : MonoBehaviour,StrimObserver{
     private PacketPrusecor _pp = PacketPrusecor.Instance;
 
     private void Start() {
-        _pp.SubscribeToStrim(Pucket.Snapshot,this);
+        _pp.SubscribeToTopic(Pucket.Snapshot,this);
         _cubes = GameObject.FindGameObjectsWithTag("Cubo");
         _cubesById = new GameObject[10];
         int counter = 0;

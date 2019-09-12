@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ConstrainedExecution;
@@ -17,6 +17,7 @@ public class Strim {
 	public Strim(bool realiabitiliy) {
 		_puckets = new List<Pucket>();
 		_acks = new List<Pucket>();
+		_observers = new List<StrimObserver>();
 		_reliabilaite = realiabitiliy;
 	}
 	
