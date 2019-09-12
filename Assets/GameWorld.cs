@@ -35,8 +35,8 @@ public class GameWorld : MonoBehaviour,StrimObserver{
             foreach (var cube in _cubes) {
                 Vector3 pos = cube.gameObject.transform.position;
                 Quaternion rot = cube.gameObject.transform.rotation;
-                positions += cube.GetComponent<CubeClass>().Id + "," + pos.x + "," + pos.y + "," + pos.z + "," + rot.w +
-                             "," + rot.x + "," + rot.y + "," + rot.z + "\n";
+                positions += cube.GetComponent<CubeClass>().Id + ";" + pos.x + ";" + pos.y + ";" + pos.z + ";" + rot.w +
+                             ";" + rot.x + ";" + rot.y + ";" + rot.z + "\n";
             }
             _pp.CreatePukcet(positions,Pucket.Snapshot);
         }
@@ -50,7 +50,8 @@ public class GameWorld : MonoBehaviour,StrimObserver{
             string[] cubes = message.Split('\n');
             foreach (string c in cubes) {
                 string[] newPos = c.Split(',');
-                _cubesById[int.Parse(newPos[0])].gameObject.transform.position = new Vector3 (float.Parse(newPos[1]), float.Parse(newPos[2]), float.Parse(newPos[3]));
+                string[] pos = newPos[3].Split(';');
+                _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3 (float.Parse(pos[1]), float.Parse(pos[2]), float.Parse(pos[3]));
             }
         }
     }
