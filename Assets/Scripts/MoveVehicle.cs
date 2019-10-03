@@ -8,10 +8,10 @@ using System.Collections.Generic;
 public class MoveVehicle : MonoBehaviour, StrimObserver
 {
     [Range(1, 10)]
-    public float accelerationForce;
+    public float accelerationForce = 1;
 
-    [Range(0, 1000)]
-    public float dragDividend;
+    [Range(1, 1000)]
+    public float dragDividend = 1;
 
     private PacketPrusecor _pp = PacketPrusecor.Instance;
 
@@ -27,22 +27,19 @@ public class MoveVehicle : MonoBehaviour, StrimObserver
     public bool IsGrounded()
     { return Physics.Raycast(this.transform.position, -Vector3.up, 0.65f); }
 
-    public void Start()
-    { 
-      this.rigidBody = GetComponent<Rigidbody>(); 
-      _pp.SubscribeToTopic(Pucket.Input,this);
-    
+    public void Start() { 
+        this.rigidBody = GetComponent<Rigidbody>(); 
+        _pp.SubscribeToTopic(Pucket.Input,this);
     }
 
-    public void HandleUpdate(string message)
-    {
-      char[] charArr = message.ToCharArray();
-      foreach(char c in charArr){
-          if(this.IsGrounded()){
-              Vector3 objectForce = keyMappings[c] * this.accelerationForce;
-              this.rigidBody.drag = objectForce.sqrMagnitude / this.dragDividend;
-              this.rigidBody.AddForce(objectForce);
-          }
-      }
+    public void HandleUpdate(string message) {
+        char[] charArr = message.ToCharArray();
+        foreach(char c in charArr) {
+            if(this.IsGrounded()) {
+                Vector3 objectForce = keyMappings[c] * this.accelerationForce;
+                this.rigidBody.drag = objectForce.sqrMagnitude / this.dragDividend;
+                this.rigidBody.AddForce(objectForce);
+            }
+        }
     }
 }

@@ -25,7 +25,7 @@ public sealed class PacketPrusecor {
 		_reliabelSlow = new Strim(true);
 		
 		
-		string sendIp = "10.17.66.99";
+		string sendIp = "10.17.66.36";
 		int sendPort = 11000;
 		int receivePort = 11000;
  

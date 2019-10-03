@@ -28,7 +28,7 @@ public class Cerver : MonoBehaviour {
 			print(counter);
 			
 		}
-		string sendIp = "10.17.67.180";
+		string sendIp = "10.17.66.51";
 		int sendPort = 11000;
 		int receivePort = 11000;
  

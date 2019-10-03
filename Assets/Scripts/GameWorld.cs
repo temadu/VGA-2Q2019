@@ -18,6 +18,7 @@ public class GameWorld : MonoBehaviour,StrimObserver{
         foreach (GameObject cube in _cubes) {
             if (Server) {
                 cube.AddComponent<Rigidbody>();
+                cube.AddComponent<MoveVehicle>();
             }
             cube.GetComponent<CubeClass>().Id = counter;
             _cubesById[counter] = cube;
@@ -30,7 +31,6 @@ public class GameWorld : MonoBehaviour,StrimObserver{
     public void Update() {
         string positions = "";
         _pp.Update();
-//		if (Input.GetKeyDown(KeyCode.Return)) {
         if (Server) {
             foreach (var cube in _cubes) {
                 Vector3 pos = cube.gameObject.transform.position;

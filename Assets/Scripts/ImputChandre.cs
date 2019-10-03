@@ -14,23 +14,19 @@ public class ImputChandre : MonoBehaviour
         {KeyCode.D, 'D'},
     };
 
-    void Start()
-    {
+    void Start(){
         
     }
 
-    void Update()
-    {
-      string s = "";
-        foreach(KeyValuePair<KeyCode, char> keyMapping in this.keyMappings)
-        {
-            if(Input.GetKey(keyMapping.Key))
-            {
+    void Update() {
+        string s = "";
+        foreach(KeyValuePair<KeyCode, char> keyMapping in this.keyMappings) {
+            if(Input.GetKey(keyMapping.Key)) {
                 s = s + keyMapping.Value; 
             }
         }
-      if(s != ""){
-        _pp.CreatePukcet(s, Pucket.Input);
-      }
+        if(s != "") {
+            _pp.CreatePukcet(s, Pucket.Input);
+        }
     }
 }
