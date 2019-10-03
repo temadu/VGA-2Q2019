@@ -8,10 +8,10 @@ using System.Collections.Generic;
 public class MoveVehicle : MonoBehaviour, StrimObserver
 {
     [Range(1, 10)]
-    public float accelerationForce = 1;
+    public float accelerationForce = 10;
 
     [Range(1, 1000)]
-    public float dragDividend = 1;
+    public float dragDividend = 500;
 
     private PacketPrusecor _pp = PacketPrusecor.Instance;
     private CubeClass me;
@@ -38,6 +38,7 @@ public class MoveVehicle : MonoBehaviour, StrimObserver
         string[] split = message.Split(';');
         int id = int.Parse(split[0]);
         char[] charArr = split[1].ToCharArray();
+        Debug.Log(message);
         if(me.Id == id) {
             foreach(char c in charArr) {
                 if(this.IsGrounded()) {

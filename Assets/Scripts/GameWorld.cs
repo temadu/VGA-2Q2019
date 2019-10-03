@@ -20,8 +20,8 @@ public class GameWorld : MonoBehaviour,StrimObserver{
                 cube.AddComponent<Rigidbody>();
                 cube.AddComponent<MoveVehicle>();
             }
-            cube.GetComponent<CubeClass>().Id = counter;
-            _cubesById[counter] = cube;
+            // cube.GetComponent<CubeClass>().Id = counter;
+            _cubesById[cube.GetComponent<CubeClass>().Id] = cube;
             counter++;
             print(counter);
 			
@@ -29,6 +29,7 @@ public class GameWorld : MonoBehaviour,StrimObserver{
     }
 
     public void Update() {
+        print(Time.deltaTime);
         string positions = "";
         _pp.Update();
         if (Server) {

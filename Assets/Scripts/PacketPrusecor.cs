@@ -57,6 +57,7 @@ public sealed class PacketPrusecor {
 						bool.Parse(splited[1])));
 					break;
 				case Pucket.Input:
+					Debug.Log(splited[3]);
 					_relasibFast.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
 						bool.Parse(splited[1])));
 					break;
