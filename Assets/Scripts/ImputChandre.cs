@@ -5,7 +5,8 @@ using UnityEngine;
 public class ImputChandre : MonoBehaviour
 {
     private PacketPrusecor _pp = PacketPrusecor.Instance;
-    
+    private CubeClass me;
+
     private Dictionary<KeyCode, char> keyMappings = new Dictionary<KeyCode, char>() {
         {KeyCode.Space, ' '},
         {KeyCode.W, 'W'},
@@ -15,11 +16,11 @@ public class ImputChandre : MonoBehaviour
     };
 
     void Start(){
-        
+        me = this.GetComponent<CubeClass>();
     }
 
     void Update() {
-        string s = "";
+        string s = me.Id + ";";
         foreach(KeyValuePair<KeyCode, char> keyMapping in this.keyMappings) {
             if(Input.GetKey(keyMapping.Key)) {
                 s = s + keyMapping.Value; 

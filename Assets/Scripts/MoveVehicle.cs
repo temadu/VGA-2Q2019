@@ -14,6 +14,7 @@ public class MoveVehicle : MonoBehaviour, StrimObserver
     public float dragDividend = 1;
 
     private PacketPrusecor _pp = PacketPrusecor.Instance;
+    private CubeClass me;
 
     private Rigidbody rigidBody;
     private Dictionary<char, Vector3> keyMappings = new Dictionary<char, Vector3>() {
@@ -30,15 +31,20 @@ public class MoveVehicle : MonoBehaviour, StrimObserver
     public void Start() { 
         this.rigidBody = GetComponent<Rigidbody>(); 
         _pp.SubscribeToTopic(Pucket.Input,this);
+        me = this.GetComponent<CubeClass>();
     }
 
     public void HandleUpdate(string message) {
-        char[] charArr = message.ToCharArray();
-        foreach(char c in charArr) {
-            if(this.IsGrounded()) {
-                Vector3 objectForce = keyMappings[c] * this.accelerationForce;
-                this.rigidBody.drag = objectForce.sqrMagnitude / this.dragDividend;
-                this.rigidBody.AddForce(objectForce);
+        string[] split = message.Split(';');
+        int id = int.Parse(split[0]);
+        char[] charArr = split[1].ToCharArray();
+        if(me.Id == id) {
+            foreach(char c in charArr) {
+                if(this.IsGrounded()) {
+                    Vector3 objectForce = keyMappings[c] * this.accelerationForce;
+                    this.rigidBody.drag = objectForce.sqrMagnitude / this.dragDividend;
+                    this.rigidBody.AddForce(objectForce);
+                }
             }
         }
     }
