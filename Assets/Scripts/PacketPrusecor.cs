@@ -1,5 +1,5 @@
-using DefaultNamespace;
 using UnityEngine;
+using System;
 
 public sealed class PacketPrusecor {
 	
@@ -62,6 +62,7 @@ public sealed class PacketPrusecor {
 						bool.Parse(splited[1])));
 					break;
 				case Pucket.Connection:
+				case Pucket.Connected:
 					// cada 1 segundo hacer if
 					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
 						bool.Parse(splited[1])));
@@ -80,6 +81,7 @@ public sealed class PacketPrusecor {
 				p =_relasibFast.CreatePacket(data, topic);
 				break;
 			case Pucket.Connection:
+			case Pucket.Connected:
 				p =_reliabelSlow.CreatePacket(data, topic);
 				break;
 		}
@@ -87,7 +89,7 @@ public sealed class PacketPrusecor {
 		_connection.Send(p.ToString());
 	}
 
-	public void SubscribeToTopic(int topic, StrimObserver obs) {
+	public void SubscribeToTopic(int topic, Action<string> obs) {
 		switch (topic) {
 			case Pucket.Snapshot:
 				_unrelisbasle.addObserver(obs);
@@ -96,6 +98,7 @@ public sealed class PacketPrusecor {
 				_relasibFast.addObserver(obs);
 				break;
 			case Pucket.Connection:
+			case Pucket.Connected:
 				_reliabelSlow.addObserver(obs);
 				break;
 		}

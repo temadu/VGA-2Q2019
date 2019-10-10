@@ -1,11 +1,10 @@
-﻿using DefaultNamespace;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 
 [System.Serializable]
 [RequireComponent(typeof(Rigidbody))]
-public class MoveVehicle : MonoBehaviour, StrimObserver
+public class MoveVehicle : MonoBehaviour
 {
     [Range(1, 10)]
     public float accelerationForce = 10;
@@ -30,7 +29,7 @@ public class MoveVehicle : MonoBehaviour, StrimObserver
 
     public void Start() { 
         this.rigidBody = GetComponent<Rigidbody>(); 
-        _pp.SubscribeToTopic(Pucket.Input,this);
+        _pp.SubscribeToTopic(Pucket.Input, HandleUpdate);
         me = this.GetComponent<CubeClass>();
     }
 

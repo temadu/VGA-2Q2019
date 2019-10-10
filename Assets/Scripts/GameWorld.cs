@@ -1,7 +1,6 @@
-﻿using DefaultNamespace;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class GameWorld : MonoBehaviour,StrimObserver{
+public class GameWorld : MonoBehaviour {
     public bool Server;
 
     private GameObject[] _cubes;
@@ -10,7 +9,7 @@ public class GameWorld : MonoBehaviour,StrimObserver{
     private PacketPrusecor _pp = PacketPrusecor.Instance;
 
     private void Start() {
-        _pp.SubscribeToTopic(Pucket.Snapshot,this);
+        _pp.SubscribeToTopic(Pucket.Snapshot, HandleUpdate);
         _cubes = GameObject.FindGameObjectsWithTag("Cubo");
         _cubesById = new GameObject[10];
         int counter = 0;
@@ -46,7 +45,7 @@ public class GameWorld : MonoBehaviour,StrimObserver{
 
 
     public void HandleUpdate(string message) {
-        if (!Server) {   
+        if (!Server) {
             Debug.Log(message);
             string[] cubes = message.Split('\n');
             foreach (string c in cubes) {
