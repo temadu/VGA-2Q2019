@@ -6,7 +6,7 @@ public class CubeClass : MonoBehaviour {
 
 	private Vector3 _position;
 
-	public long Id;
+	public int Id;
 	// Use this for initialization
 	void Start () {
 		_position = gameObject.transform.position;		

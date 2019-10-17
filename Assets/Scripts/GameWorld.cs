@@ -1,4 +1,7 @@
 ﻿using UnityEngine;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 public class GameWorld : MonoBehaviour {
     public bool Server;
@@ -7,12 +10,14 @@ public class GameWorld : MonoBehaviour {
     private Dictionary<int, GameObject> _cubesById;
 
     private PacketPrusecor _pp = PacketPrusecor.Instance;
+    public GameObject playerPrefab;
+    private int counter = 0;
 
     private void Start() {
         _pp.SubscribeToTopic(Pucket.Snapshot, HandleUpdate);
         _cubes = GameObject.FindGameObjectsWithTag("Cubo");
-        _cubesById = new GameObject[10];
-        int counter = 0;
+        _cubesById = new Dictionary<int, GameObject>();
+        counter = 0;
 			
         foreach (GameObject cube in _cubes) {
             if (Server) {
