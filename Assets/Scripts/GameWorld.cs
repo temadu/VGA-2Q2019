@@ -4,7 +4,7 @@ public class GameWorld : MonoBehaviour {
     public bool Server;
 
     private GameObject[] _cubes;
-    private GameObject[] _cubesById;
+    private Dictionary<int, GameObject> _cubesById;
 
     private PacketPrusecor _pp = PacketPrusecor.Instance;
 
@@ -23,12 +23,35 @@ public class GameWorld : MonoBehaviour {
             _cubesById[cube.GetComponent<CubeClass>().Id] = cube;
             counter++;
             print(counter);
-			
+        }
+
+        if(!Server) {
+            // data de login? ip? name?
+            _pp.CreatePukcet("neim", Pucket.Connection);
+            _pp.SubscribeToTopic(Pucket.Connected, message => {
+                GameObject newPlayer = Instantiate(playerPrefab);
+                int id = int.Parse(message);
+                newPlayer.GetComponent<CubeClass>().Id = id;
+                Array.Resize(ref _cubes, _cubes.Length + 1);
+                _cubes[_cubes.GetUpperBound(0)] = newPlayer;	
+                _cubesById[counter] = newPlayer;
+            });
+        } else {
+            _pp.SubscribeToTopic(Pucket.Connection, message => {
+                print(message);
+                GameObject newPlayer = Instantiate(playerPrefab);
+                newPlayer.AddComponent<Rigidbody>();
+                newPlayer.GetComponent<CubeClass>().Id = counter++;
+                Array.Resize(ref _cubes, _cubes.Length + 1);
+                _cubes[_cubes.GetUpperBound(0)] = newPlayer;
+                _cubesById[counter] = newPlayer;
+                _pp.CreatePukcet(counter.ToString(), Pucket.Connected);
+            });
         }
     }
 
     public void Update() {
-        print(Time.deltaTime);
+        // print(Time.deltaTime);
         string positions = "";
         _pp.Update();
         if (Server) {

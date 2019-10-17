@@ -25,7 +25,7 @@ public sealed class PacketPrusecor {
 		_reliabelSlow = new Strim(true);
 		
 		
-		string sendIp = "10.17.66.51";
+		string sendIp = "10.17.64.90";
 		int sendPort = 11000;
 		int receivePort = 11000;
  
@@ -64,6 +64,7 @@ public sealed class PacketPrusecor {
 				case Pucket.Connection:
 				case Pucket.Connected:
 					// cada 1 segundo hacer if
+					Debug.Log("login");
 					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
 						bool.Parse(splited[1])));
 					break;
