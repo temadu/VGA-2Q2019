@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,11 +7,11 @@ public class Cerver : MonoBehaviour {
 	public bool Server;
 
 	private GameObject[] _cubes;
-	private GameObject[] _cubesById;
+	private Dictionary<int, GameObject> _cubesById;
 
 	private UdpConnection connection;
 	public GameObject playerPrefab;
-    private PacketPrusecor _pp = PacketPrusecor.Instance;	
+  private PacketPrusecor _pp = PacketPrusecor.Instance;	
 	private int counter;
 //	public Text text;
 //	public InputField inputField;
@@ -18,7 +19,7 @@ public class Cerver : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		_cubes = GameObject.FindGameObjectsWithTag("Cubo");
-	    _cubesById = new GameObject[10];
+    _cubesById = new Dictionary<int, GameObject>();
 		counter = 0;
 			
 		foreach (GameObject cube in _cubes) {
@@ -43,8 +44,9 @@ public class Cerver : MonoBehaviour {
 			_pp.SubscribeToTopic(Pucket.Connected, message => {
 				GameObject newPlayer = Instantiate(playerPrefab);
 				int id = int.Parse(message);
-				newPlayer.GetComponent<CubeClass>().Id = id;				
-				_cubes.ToList().Add(newPlayer).ToArray();
+				newPlayer.GetComponent<CubeClass>().Id = id;
+        Array.Resize(ref _cubes, _cubes.Length + 1);
+        _cubes[_cubes.GetUpperBound(0)] = newPlayer;	
 				_cubesById[counter] = newPlayer;
 			});
 		} else {
@@ -52,8 +54,9 @@ public class Cerver : MonoBehaviour {
 				GameObject newPlayer = Instantiate(playerPrefab);
 				newPlayer.AddComponent<Rigidbody>();
 				newPlayer.GetComponent<CubeClass>().Id = counter++;
-				_cubes.ToList().Add(newPlayer).ToArray();				
-				_cubesById[counter] = newPlayer;
+        Array.Resize(ref _cubes, _cubes.Length + 1);
+        _cubes[_cubes.GetUpperBound(0)] = newPlayer;
+        _cubesById[counter] = newPlayer;
 				_pp.CreatePukcet(counter.ToString(), Pucket.Connected);
 			});
 		}
