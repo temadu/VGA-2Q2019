@@ -13,7 +13,7 @@ public class GameWorld : MonoBehaviour {
     public GameObject playerPrefab;
     public GameObject otherPlayerPrefab;
     private int counter = 0;
-
+    private int counterTest = 0;
     private void Start() {
         _cubesById = new Dictionary<int, GameObject>();
         if(Server) {
@@ -35,6 +35,19 @@ public class GameWorld : MonoBehaviour {
         if(!Server) {
             // data de login? ip? name?
             _pp.CreatePukcet("neim", Pucket.Connection);
+            
+            _pp.SubscribeToTopic(Pucket.Snapshot, message => {
+                    string[] cubes = message.Split('\n');
+                    foreach (string c in cubes) {
+                        if(c.Length == 0) continue;
+                        string[] pos = c.Split(';');
+                        if(_cubesById.ContainsKey(int.Parse(pos[0]))){
+                            _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3 (float.Parse(pos[1]), float.Parse(pos[2]), float.Parse(pos[3]));
+                        }
+                    }
+                }
+            });
+            
             _pp.SubscribeToTopic(Pucket.Connected, message => {
                 GameObject newPlayer = Instantiate(playerPrefab);
                 string[] split = message.Split(';');
@@ -42,7 +55,6 @@ public class GameWorld : MonoBehaviour {
                 newPlayer.GetComponent<CubeClass>().Id = id;
                 _cubesById[id] = newPlayer;
                 string[] ids = split[1].Split('-');
-                print(ids);
                 foreach(string pId in ids) {
                     GameObject newCube = Instantiate(otherPlayerPrefab);
                     newCube.GetComponent<CubeClass>().Id = int.Parse(pId);
@@ -60,10 +72,12 @@ public class GameWorld : MonoBehaviour {
                 _cubes[_cubes.GetUpperBound(0)] = newPlayer;
                 _cubesById[counter] = newPlayer;
                 string data = counter.ToString() + ';';
+                print(_cubesById.Keys);
                 foreach(int key in _cubesById.Keys) {
                     data += key.ToString() + '-';
                 }
                 data = data.Remove(data.Length - 1);
+                print(data);
                 _pp.CreatePukcet(data, Pucket.Connected);
             });
         }
@@ -73,30 +87,16 @@ public class GameWorld : MonoBehaviour {
         // print(Time.deltaTime);
         string positions = "";
         _pp.Update();
-        if (Server) {
+        if (Server && counterTest++ % 100 == 0) {
             foreach (var cube in _cubes) {
                 Vector3 pos = cube.gameObject.transform.position;
                 Quaternion rot = cube.gameObject.transform.rotation;
                 positions += cube.GetComponent<CubeClass>().Id + ";" + pos.x + ";" + pos.y + ";" + pos.z + ";" + rot.w +
                              ";" + rot.x + ";" + rot.y + ";" + rot.z + "\n";
             }
+            print(positions);
             _pp.CreatePukcet(positions,Pucket.Snapshot);
         }
 
-    }
-
-
-    public void HandleUpdate(string message) {
-        if (!Server) {
-            Debug.Log(message);
-            string[] cubes = message.Split('\n');
-            foreach (string c in cubes) {
-                if(c.Length == 0) continue;
-                string[] pos = c.Split(';');
-                if(_cubesById.ContainsKey(int.Parse(pos[0]))){
-                    _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3 (float.Parse(pos[1]), float.Parse(pos[2]), float.Parse(pos[3]));
-                }
-            }
-        }
     }
 }
