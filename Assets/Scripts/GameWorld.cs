@@ -38,7 +38,7 @@ public class GameWorld : MonoBehaviour {
                 newPlayer.GetComponent<CubeClass>().Id = id;
                 Array.Resize(ref _cubes, _cubes.Length + 1);
                 _cubes[_cubes.GetUpperBound(0)] = newPlayer;	
-                _cubesById[counter] = newPlayer;
+                _cubesById[id] = newPlayer;
             });
         } else {
             _pp.SubscribeToTopic(Pucket.Connection, message => {
@@ -79,7 +79,9 @@ public class GameWorld : MonoBehaviour {
             foreach (string c in cubes) {
                 if(c.Length == 0) continue;
                 string[] pos = c.Split(';');
-                _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3 (float.Parse(pos[1]), float.Parse(pos[2]), float.Parse(pos[3]));
+                if(_cubesById.ContainsKey(int.Parse(pos[0]))){
+                    _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3 (float.Parse(pos[1]), float.Parse(pos[2]), float.Parse(pos[3]));
+                }
             }
         }
     }
