@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +15,7 @@ public class GameWorld : MonoBehaviour {
     private int counter = 0;
 
     private void Start() {
+        _cubesById = new Dictionary<int, GameObject>();
         if(Server) {
             _cubes = GameObject.FindGameObjectsWithTag("Cubo");
             _cubesById = new Dictionary<int, GameObject>();
@@ -40,7 +41,7 @@ public class GameWorld : MonoBehaviour {
                 int id = int.Parse(split[0]);
                 newPlayer.GetComponent<CubeClass>().Id = id;
                 _cubesById[id] = newPlayer;
-                string[] ids = split[1].Split(',');
+                string[] ids = split[1].Split('-');
                 print(ids);
                 foreach(string pId in ids) {
                     GameObject newCube = Instantiate(otherPlayerPrefab);
@@ -60,7 +61,7 @@ public class GameWorld : MonoBehaviour {
                 _cubesById[counter] = newPlayer;
                 string data = counter.ToString() + ';';
                 foreach(int key in _cubesById.Keys) {
-                    data += key.ToString() + ',';
+                    data += key.ToString() + '-';
                 }
                 data = data.Remove(data.Length - 1);
                 _pp.CreatePukcet(data, Pucket.Connected);
