@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,9 +44,11 @@ public class GameWorld : MonoBehaviour {
                 string[] ids = split[1].Split('-');
                 print(ids);
                 foreach(string pId in ids) {
-                    GameObject newCube = Instantiate(otherPlayerPrefab);
-                    newCube.GetComponent<CubeClass>().Id = int.Parse(pId);
-                    _cubesById[int.Parse(pId)] = newCube;
+                    if (!pId.Equals(id.ToString())) {
+                        GameObject newCube = Instantiate(otherPlayerPrefab);
+                        newCube.GetComponent<CubeClass>().Id = int.Parse(pId);
+                        _cubesById[int.Parse(pId)] = newCube;
+                    }
                 }
             });
         } else {
