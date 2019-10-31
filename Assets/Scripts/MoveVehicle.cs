@@ -37,10 +37,13 @@ public class MoveVehicle : MonoBehaviour
         string[] split = message.Split(';');
         int id = int.Parse(split[0]);
         char[] charArr = split[1].ToCharArray();
-        Debug.Log(message);
+        
         if(me.Id == id) {
             foreach(char c in charArr) {
+                Debug.Log(c);
                 if(this.IsGrounded()) {
+                    Debug.Log("grounder");
+                    
                     Vector3 objectForce = keyMappings[c] * this.accelerationForce;
                     this.rigidBody.drag = objectForce.sqrMagnitude / this.dragDividend;
                     this.rigidBody.AddForce(objectForce);

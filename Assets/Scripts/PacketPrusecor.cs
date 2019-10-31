@@ -49,7 +49,7 @@ public sealed class PacketPrusecor {
 	// topic 4 rel-slow
 	public void Update () {
 		foreach (var message in _connection.getMessages()) {
-			Debug.Log(message);
+			// Debug.Log(message);
 			string[] splited = message.Split(',');
 			switch (int.Parse(splited[0])) {
 				case Pucket.Snapshot:
@@ -57,7 +57,7 @@ public sealed class PacketPrusecor {
 						bool.Parse(splited[1])));
 					break;
 				case Pucket.Input:
-					Debug.Log(splited[3]);
+					// Debug.Log(splited[3]);
 					_relasibFast.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
 						bool.Parse(splited[1])));
 					break;

@@ -22,7 +22,6 @@ public class GameWorld : MonoBehaviour {
         foreach (GameObject cube in _cubes) {
             if (Server) {
                 cube.AddComponent<Rigidbody>();
-                cube.AddComponent<MoveVehicle>();
             }
             // cube.GetComponent<CubeClass>().Id = counter;
             _cubesById[cube.GetComponent<CubeClass>().Id] = cube;
@@ -46,7 +45,8 @@ public class GameWorld : MonoBehaviour {
                 print(message);
                 GameObject newPlayer = Instantiate(playerPrefab);
                 newPlayer.AddComponent<Rigidbody>();
-                newPlayer.GetComponent<CubeClass>().Id = counter++;
+                newPlayer.AddComponent<MoveVehicle>();
+                newPlayer.GetComponent<CubeClass>().Id = ++counter;
                 Array.Resize(ref _cubes, _cubes.Length + 1);
                 _cubes[_cubes.GetUpperBound(0)] = newPlayer;
                 _cubesById[counter] = newPlayer;
