@@ -20,16 +20,15 @@ public class GameWorld : MonoBehaviour {
             _cubes = GameObject.FindGameObjectsWithTag("Cubo");
             _cubesById = new Dictionary<int, GameObject>();
             counter = 0;
-			
-            foreach (GameObject cube in _cubes) {
+
+            foreach (GameObject cube in _cubes)
+            {
                 cube.AddComponent<Rigidbody>();
                 _cubesById[cube.GetComponent<CubeClass>().Id] = cube;
                 // cube.GetComponent<CubeClass>().Id = counter;
                 counter++;
                 print(counter);
             }
-        } else {
-            _pp.SubscribeToTopic(Pucket.Snapshot, HandleUpdate);
         }
 
         if(!Server) {
@@ -45,7 +44,6 @@ public class GameWorld : MonoBehaviour {
                             _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3 (float.Parse(pos[1]), float.Parse(pos[2]), float.Parse(pos[3]));
                         }
                     }
-                }
             });
             
             _pp.SubscribeToTopic(Pucket.Connected, message => {
