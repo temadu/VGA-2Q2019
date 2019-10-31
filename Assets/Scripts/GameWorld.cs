@@ -28,8 +28,6 @@ public class GameWorld : MonoBehaviour {
                 counter++;
                 print(counter);
             }
-        } else {
-            _pp.SubscribeToTopic(Pucket.Snapshot, HandleUpdate);
         }
 
         if(!Server) {
@@ -37,13 +35,12 @@ public class GameWorld : MonoBehaviour {
             _pp.CreatePukcet("neim", Pucket.Connection);
             
             _pp.SubscribeToTopic(Pucket.Snapshot, message => {
-                    string[] cubes = message.Split('\n');
-                    foreach (string c in cubes) {
-                        if(c.Length == 0) continue;
-                        string[] pos = c.Split(';');
-                        if(_cubesById.ContainsKey(int.Parse(pos[0]))){
-                            _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3 (float.Parse(pos[1]), float.Parse(pos[2]), float.Parse(pos[3]));
-                        }
+                string[] cubes = message.Split('\n');
+                foreach (string c in cubes) {
+                    if(c.Length == 0) continue;
+                    string[] pos = c.Split(';');
+                    if(_cubesById.ContainsKey(int.Parse(pos[0]))){
+                        _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3 (float.Parse(pos[1]), float.Parse(pos[2]), float.Parse(pos[3]));
                     }
                 }
             });
