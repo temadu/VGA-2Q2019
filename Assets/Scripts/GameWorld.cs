@@ -35,14 +35,19 @@ public class GameWorld : MonoBehaviour {
             // data de login? ip? name?
             _pp.CreatePukcet("neim", Pucket.Connection);
             
-            _pp.SubscribeToTopic(Pucket.Snapshot, message => {
+            _pp.SubscribeToTopic(Pucket.Snapshot, message =>
+            {
                 string[] cubes = message.Split('\n');
-                foreach (string c in cubes) {
-                    if(c.Length == 0) continue;
+                foreach (string c in cubes)
+                {
+                    if (c.Length == 0) continue;
                     string[] pos = c.Split(';');
-                    if(_cubesById.ContainsKey(int.Parse(pos[0]))){
-                        _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3 (float.Parse(pos[1]), float.Parse(pos[2]), float.Parse(pos[3]));
+                    if (_cubesById.ContainsKey(int.Parse(pos[0])))
+                    {
+                        _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3(float.Parse(pos[1]),
+                            float.Parse(pos[2]), float.Parse(pos[3]));
                     }
+                }
             });
             
             _pp.SubscribeToTopic(Pucket.Connected, message => {
