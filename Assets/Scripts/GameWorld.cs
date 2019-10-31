@@ -11,22 +11,24 @@ public class GameWorld : MonoBehaviour {
 
     private PacketPrusecor _pp = PacketPrusecor.Instance;
     public GameObject playerPrefab;
+    public GameObject otherPlayerPrefab;
     private int counter = 0;
 
     private void Start() {
-        _pp.SubscribeToTopic(Pucket.Snapshot, HandleUpdate);
-        _cubes = GameObject.FindGameObjectsWithTag("Cubo");
-        _cubesById = new Dictionary<int, GameObject>();
-        counter = 0;
+        if(Server) {
+            _cubes = GameObject.FindGameObjectsWithTag("Cubo");
+            _cubesById = new Dictionary<int, GameObject>();
+            counter = 0;
 			
-        foreach (GameObject cube in _cubes) {
-            if (Server) {
+            foreach (GameObject cube in _cubes) {
                 cube.AddComponent<Rigidbody>();
+                _cubesById[cube.GetComponent<CubeClass>().Id] = cube;
+                // cube.GetComponent<CubeClass>().Id = counter;
+                counter++;
+                print(counter);
             }
-            // cube.GetComponent<CubeClass>().Id = counter;
-            _cubesById[cube.GetComponent<CubeClass>().Id] = cube;
-            counter++;
-            print(counter);
+        } else {
+            _pp.SubscribeToTopic(Pucket.Snapshot, HandleUpdate);
         }
 
         if(!Server) {
@@ -34,11 +36,17 @@ public class GameWorld : MonoBehaviour {
             _pp.CreatePukcet("neim", Pucket.Connection);
             _pp.SubscribeToTopic(Pucket.Connected, message => {
                 GameObject newPlayer = Instantiate(playerPrefab);
-                int id = int.Parse(message);
+                string[] split = message.Split(';');
+                int id = int.Parse(split[0]);
                 newPlayer.GetComponent<CubeClass>().Id = id;
-                Array.Resize(ref _cubes, _cubes.Length + 1);
-                _cubes[_cubes.GetUpperBound(0)] = newPlayer;	
                 _cubesById[id] = newPlayer;
+                string[] ids = split[1].Split(',');
+                print(ids);
+                foreach(string pId in ids) {
+                    GameObject newCube = Instantiate(otherPlayerPrefab);
+                    newCube.GetComponent<CubeClass>().Id = int.Parse(pId);
+                    _cubesById[int.Parse(pId)] = newCube;
+                }
             });
         } else {
             _pp.SubscribeToTopic(Pucket.Connection, message => {
@@ -50,7 +58,12 @@ public class GameWorld : MonoBehaviour {
                 Array.Resize(ref _cubes, _cubes.Length + 1);
                 _cubes[_cubes.GetUpperBound(0)] = newPlayer;
                 _cubesById[counter] = newPlayer;
-                _pp.CreatePukcet(counter.ToString(), Pucket.Connected);
+                string data = counter.ToString() + ';';
+                foreach(int key in _cubesById.Keys) {
+                    data += key.ToString() + ',';
+                }
+                data = data.Remove(data.Length - 1);
+                _pp.CreatePukcet(data, Pucket.Connected);
             });
         }
     }
