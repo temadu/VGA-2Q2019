@@ -21,13 +21,15 @@ public class ImputChandre : MonoBehaviour
 
     void Update() {
         string s = me.Id + ";";
+        string inputs = "";
         foreach(KeyValuePair<KeyCode, char> keyMapping in this.keyMappings) {
             if(Input.GetKey(keyMapping.Key)) {
-                s = s + keyMapping.Value; 
+                inputs = inputs + keyMapping.Value; 
             }
         }
-        if(s != "") {
-            _pp.CreatePukcet(s, Pucket.Input);
+        if(inputs != "") {
+            Debug.Log(s + inputs);
+            _pp.CreatePukcet(s + inputs, Pucket.Input);
         }
     }
 }

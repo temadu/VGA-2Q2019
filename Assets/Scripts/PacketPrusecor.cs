@@ -61,8 +61,13 @@ public sealed class PacketPrusecor {
 					_relasibFast.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
 						bool.Parse(splited[1])));
 					break;
-				case Pucket.Connection:
-					Debug.Log("login");
+				case Pucket.Login:
+					Debug.Log("LOGIIIINNNNN");
+					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
+						bool.Parse(splited[1])));
+					break;
+				case Pucket.Logined:
+					Debug.Log("loginned");
 					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
 						bool.Parse(splited[1])));
 					break;					
@@ -88,6 +93,7 @@ public sealed class PacketPrusecor {
 			case Pucket.Connected:
 			case Pucket.Login:
 			case Pucket.Logined:
+				Debug.Log("CREATING PUCKET C* or L*");
 				p =_reliabelSlow.CreatePacket(data, topic);
 				break;
 		}
@@ -105,6 +111,8 @@ public sealed class PacketPrusecor {
 				break;
 			case Pucket.Connection:
 			case Pucket.Connected:
+			case Pucket.Login:
+			case Pucket.Logined:
 				_reliabelSlow.addObserver(obs, topic);
 				break;
 		}

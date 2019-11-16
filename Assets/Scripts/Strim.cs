@@ -23,6 +23,9 @@ public class Strim {
 		if (p.Ack) {
 			_puckets = _puckets.Where(pq => pq.Order > p.Order).ToList();
 		} else {
+			if(!_observers.ContainsKey(p.Topic)){
+				_observers[p.Topic] = new List<Action<string>>();
+			}
 			_observers[p.Topic].ForEach(obs => obs(p.Data));
 			if (_reliabilaite) { //crear ack
 				CreatePacket(p.Order.ToString(), p.Topic, true);

@@ -32,11 +32,14 @@ public class GameWorld : MonoBehaviour {
 
         if(!Server) {
             // data de login? ip? name?
+            Debug.Log("Sending LOGIN");
             _pp.CreatePukcet("neim", Pucket.Login);
 
             _pp.SubscribeToTopic(Pucket.Logined, message => {
+                Debug.Log("LOGINNEEEEDDDD");
                 int id = int.Parse(message);
                 GameObject newPlayer = Instantiate(playerPrefab);
+                newPlayer.name = "CualquierCosa";
                 newPlayer.GetComponent<CubeClass>().Id = id;
                 newPlayer.AddComponent<ImputChandre>();
                 newPlayer.transform.position = new Vector3(0,0,0);
@@ -58,10 +61,15 @@ public class GameWorld : MonoBehaviour {
             
             _pp.SubscribeToTopic(Pucket.Connected, message => {
                 string[] split = message.Split('-');
-                string[] ids = split[0].Split(',');
-                string[] names = split[1].Split(',');
+                string[] ids = split[0].Split(';');
+                string[] names = split[1].Split(';');
                 for (int i = 0; i < ids.Length; i++) {
-                    GameObject cube = _cubesById[int.Parse(ids[i])];
+                    if(ids.Length ==0) continue;
+                    GameObject cube = null;
+                    if (_cubesById.ContainsKey(int.Parse(ids[i])))
+                    {
+                        cube = _cubesById[int.Parse(ids[i])];
+                    }
                     if (cube == null) {
                         cube = Instantiate(otherPlayerPrefab);
                         cube.transform.position = new Vector3(0,0,0);
