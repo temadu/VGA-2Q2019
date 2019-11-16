@@ -42,7 +42,7 @@ public class Strim {
 	}
 
 	public void addObserver(Action<string> obs, int topic) {
-		if(_observers[topic].Count == 0){
+		if(!_observers.ContainsKey(topic)){
 			_observers[topic] = new List<Action<string>>();
 		}
 		_observers[topic].Add(obs);
