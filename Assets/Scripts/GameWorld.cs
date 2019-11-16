@@ -5,10 +5,8 @@ using System.Collections.Generic;
 
 public class GameWorld : MonoBehaviour {
     public bool Server;
-
     private GameObject[] _cubes;
     private Dictionary<int, GameObject> _cubesById;
-
     private PacketPrusecor _pp = PacketPrusecor.Instance;
     public GameObject playerPrefab;
     public GameObject otherPlayerPrefab;
@@ -28,22 +26,30 @@ public class GameWorld : MonoBehaviour {
                 // cube.GetComponent<CubeClass>().Id = counter;
                 counter++;
                 print(counter);
+                
             }
         }
 
         if(!Server) {
             // data de login? ip? name?
-            _pp.CreatePukcet("neim", Pucket.Connection);
-            
-            _pp.SubscribeToTopic(Pucket.Snapshot, message =>
-            {
+            _pp.CreatePukcet("neim", Pucket.Login);
+
+            _pp.SubscribeToTopic(Pucket.Logined, message => {
+                int id = int.Parse(message);
+                GameObject newPlayer = Instantiate(playerPrefab);
+                newPlayer.GetComponent<CubeClass>().Id = id;
+                newPlayer.AddComponent<ImputChandre>();
+                newPlayer.transform.position = new Vector3(0,0,0);
+                _cubesById[id] = newPlayer;
+            });
+
+            _pp.SubscribeToTopic(Pucket.Snapshot, message => {
                 string[] cubes = message.Split('\n');
                 foreach (string c in cubes)
                 {
                     if (c.Length == 0) continue;
                     string[] pos = c.Split(';');
-                    if (_cubesById.ContainsKey(int.Parse(pos[0])))
-                    {
+                    if (_cubesById.ContainsKey(int.Parse(pos[0]))) {
                         _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3(float.Parse(pos[1]),
                             float.Parse(pos[2]), float.Parse(pos[3]));
                     }
@@ -51,38 +57,41 @@ public class GameWorld : MonoBehaviour {
             });
             
             _pp.SubscribeToTopic(Pucket.Connected, message => {
-                GameObject newPlayer = Instantiate(playerPrefab);
-                string[] split = message.Split(';');
-                int id = int.Parse(split[0]);
-                newPlayer.GetComponent<CubeClass>().Id = id;
-                _cubesById[id] = newPlayer;
-                string[] ids = split[1].Split('-');
-                foreach(string pId in ids) {
-                    if (!pId.Equals(id.ToString())) {
-                        GameObject newCube = Instantiate(otherPlayerPrefab);
-                        newCube.GetComponent<CubeClass>().Id = int.Parse(pId);
-                        _cubesById[int.Parse(pId)] = newCube;
-                    }
+                string[] split = message.Split('-');
+                string[] ids = split[0].Split(',');
+                string[] names = split[1].Split(',');
+                for (int i = 0; i < ids.Length; i++) {
+                    GameObject cube = _cubesById[int.Parse(ids[i])];
+                    if (cube == null) {
+                        cube = Instantiate(otherPlayerPrefab);
+                        cube.transform.position = new Vector3(0,0,0);
+                    } 
+                    cube.GetComponent<CubeClass>().Id = int.Parse(ids[i]);
+                    cube.GetComponent<CubeClass>().Name = names[i];
+                    _cubesById[int.Parse(ids[i])] = cube;
                 }
             });
         } else {
-            _pp.SubscribeToTopic(Pucket.Connection, message => {
-                print(message);
+            _pp.SubscribeToTopic(Pucket.Login, message => {
                 GameObject newPlayer = Instantiate(playerPrefab);
                 newPlayer.AddComponent<Rigidbody>();
                 newPlayer.AddComponent<MoveVehicle>();
                 newPlayer.GetComponent<CubeClass>().Id = ++counter;
+                newPlayer.GetComponent<CubeClass>().Name = message;
                 Array.Resize(ref _cubes, _cubes.Length + 1);
                 _cubes[_cubes.GetUpperBound(0)] = newPlayer;
                 _cubesById[counter] = newPlayer;
-                string data = counter.ToString() + ';';
-                print(_cubesById.Keys);
+                string ids = "";
+                string names = "";
                 foreach(int key in _cubesById.Keys) {
-                    data += key.ToString() + '-';
+                    ids += key.ToString() + ',';
+                    names += _cubesById[key].name + ',';
                 }
-                data = data.Remove(data.Length - 1);
-                print(data);
-                _pp.CreatePukcet(data, Pucket.Connected);
+
+                ids = ids.Remove(ids.Length - 1);
+                names = names.Remove(names.Length - 1);
+                _pp.CreatePukcet(counter.ToString(), Pucket.Logined);
+                _pp.CreatePukcet(ids + '-' + names, Pucket.Connected);
             });
         }
     }

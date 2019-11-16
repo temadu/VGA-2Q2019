@@ -7,9 +7,7 @@ using UnityEngine;
 
 public class Strim {
 	private long _order = 0L;
-
-	private List<Action<string>> _observers;
-	
+	private Dictionary<int, List<Action<string>>> _observers;
 	private List<Pucket> _puckets;
 	private List<Pucket> _acks;
 	private bool _reliabilaite;
@@ -17,7 +15,7 @@ public class Strim {
 	public Strim(bool realiabitiliy) {
 		_puckets = new List<Pucket>();
 		_acks = new List<Pucket>();
-		_observers = new List<Action<string>>();
+		_observers = new Dictionary<int, List<Action<string>>>();
 		_reliabilaite = realiabitiliy;
 	}
 	
@@ -25,8 +23,7 @@ public class Strim {
 		if (p.Ack) {
 			_puckets = _puckets.Where(pq => pq.Order > p.Order).ToList();
 		} else {
-			// Debug.Log(p.Data);
-			_observers.ForEach(obs=> obs(p.Data));
+			_observers[p.Topic].ForEach(obs => obs(p.Data));
 			if (_reliabilaite) { //crear ack
 				CreatePacket(p.Order.ToString(), p.Topic, true);
 			}
@@ -44,8 +41,11 @@ public class Strim {
 		return q;
 	}
 
-	public void addObserver(Action<string> obs) {
-		_observers.Add(obs);
+	public void addObserver(Action<string> obs, int topic) {
+		if(_observers[topic].Count == 0){
+			_observers[topic] = new List<Action<string>>();
+		}
+		_observers[topic].Add(obs);
 	}
 
 	public List<Pucket> GetPockets() {

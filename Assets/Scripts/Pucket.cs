@@ -5,6 +5,9 @@ public class Pucket {
     public const int Input = 1;
     public const int Connection = 2;
     public const int Connected = 3;
+    public const int Login = 4;
+    public const int Logined = 5;
+
        
     public int Topic;
     public bool Ack;

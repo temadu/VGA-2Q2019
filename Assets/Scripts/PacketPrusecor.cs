@@ -25,7 +25,7 @@ public sealed class PacketPrusecor {
 		_reliabelSlow = new Strim(true);
 		
 		
-		string sendIp = "192.168.1.8";
+		string sendIp = "192.168.1.14";
 		int sendPort = 11000;
 		int receivePort = 11000;
  
@@ -62,9 +62,12 @@ public sealed class PacketPrusecor {
 						bool.Parse(splited[1])));
 					break;
 				case Pucket.Connection:
+					Debug.Log("login");
+					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
+						bool.Parse(splited[1])));
+					break;					
 				case Pucket.Connected:
 					// cada 1 segundo hacer if
-					Debug.Log("login");
 					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
 						bool.Parse(splited[1])));
 					break;
@@ -93,14 +96,14 @@ public sealed class PacketPrusecor {
 	public void SubscribeToTopic(int topic, Action<string> obs) {
 		switch (topic) {
 			case Pucket.Snapshot:
-				_unrelisbasle.addObserver(obs);
+				_unrelisbasle.addObserver(obs, topic);
 				break;
 			case Pucket.Input:
-				_relasibFast.addObserver(obs);
+				_relasibFast.addObserver(obs, topic);
 				break;
 			case Pucket.Connection:
 			case Pucket.Connected:
-				_reliabelSlow.addObserver(obs);
+				_reliabelSlow.addObserver(obs, topic);
 				break;
 		}
 	}
