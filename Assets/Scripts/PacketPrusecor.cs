@@ -25,7 +25,7 @@ public sealed class PacketPrusecor {
 		_reliabelSlow = new Strim(true);
 		
 		
-		string sendIp = "192.168.1.52";
+		string sendIp = "192.168.1.54";
 		int sendPort = 11000;
 		int receivePort = 11000;
  
@@ -62,12 +62,12 @@ public sealed class PacketPrusecor {
 						bool.Parse(splited[1])));
 					break;
 				case Pucket.Login:
-					Debug.Log("LOGIIIINNNNN");
+					Debug.Log("login");
 					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
 						bool.Parse(splited[1])));
-					break;
+					break;					
 				case Pucket.Logined:
-					Debug.Log("loginned");
+					Debug.Log("logined");
 					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
 						bool.Parse(splited[1])));
 					break;					
@@ -93,7 +93,7 @@ public sealed class PacketPrusecor {
 			case Pucket.Connected:
 			case Pucket.Login:
 			case Pucket.Logined:
-				Debug.Log("CREATING PUCKET C* or L*");
+				Debug.Log(topic);
 				p =_reliabelSlow.CreatePacket(data, topic);
 				break;
 		}

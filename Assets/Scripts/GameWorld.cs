@@ -81,6 +81,8 @@ public class GameWorld : MonoBehaviour {
             });
         } else {
             _pp.SubscribeToTopic(Pucket.Login, message => {
+                print("NEW USER");
+                print(message);
                 GameObject newPlayer = Instantiate(playerPrefab);
                 newPlayer.AddComponent<Rigidbody>();
                 newPlayer.AddComponent<MoveVehicle>();
@@ -92,14 +94,14 @@ public class GameWorld : MonoBehaviour {
                 string ids = "";
                 string names = "";
                 foreach(int key in _cubesById.Keys) {
-                    ids += key.ToString() + ',';
-                    names += _cubesById[key].name + ',';
+                    ids += key.ToString() + ';';
+                    names += _cubesById[key].GetComponent<CubeClass>().Name + ';';
                 }
 
                 ids = ids.Remove(ids.Length - 1);
                 names = names.Remove(names.Length - 1);
                 _pp.CreatePukcet(counter.ToString(), Pucket.Logined);
-                _pp.CreatePukcet(ids + '-' + names, Pucket.Connected);
+                _pp.CreatePukcet((ids + '-' + names), Pucket.Connected);
             });
         }
     }
