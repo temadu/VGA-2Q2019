@@ -71,7 +71,7 @@ public sealed class PacketPrusecor {
 					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
 						bool.Parse(splited[1])));
 					break;					
-				case Pucket.Connected:
+				case Pucket.UpdatePlayersInfo:
 					// cada 1 segundo hacer if
 					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
 						bool.Parse(splited[1])));
@@ -90,7 +90,7 @@ public sealed class PacketPrusecor {
 				p =_relasibFast.CreatePacket(data, topic);
 				break;
 			case Pucket.Connection:
-			case Pucket.Connected:
+			case Pucket.UpdatePlayersInfo:
 			case Pucket.Login:
 			case Pucket.Logined:
 				Debug.Log(topic);
@@ -110,7 +110,7 @@ public sealed class PacketPrusecor {
 				_relasibFast.addObserver(obs, topic);
 				break;
 			case Pucket.Connection:
-			case Pucket.Connected:
+			case Pucket.UpdatePlayersInfo:
 			case Pucket.Login:
 			case Pucket.Logined:
 				_reliabelSlow.addObserver(obs, topic);

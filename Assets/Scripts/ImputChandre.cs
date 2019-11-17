@@ -31,5 +31,7 @@ public class ImputChandre : MonoBehaviour
             Debug.Log(s + inputs);
             _pp.CreatePukcet(s + inputs, Pucket.Input);
         }
+
+        // predecir/simular mis movimientos
     }
 }

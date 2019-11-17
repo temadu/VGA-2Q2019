@@ -41,7 +41,7 @@
 //         if(!Server) {
 //             // data de login? ip? name?
 //             _pp.CreatePukcet("neim", Pucket.Connection);
-//             _pp.SubscribeToTopic(Pucket.Connected, message => {
+//             _pp.SubscribeToTopic(Pucket.UpdatePlayersInfo, message => {
 //                 GameObject newPlayer = Instantiate(playerPrefab);
 //                 int id = int.Parse(message);
 //                 newPlayer.GetComponent<CubeClass>().Id = id;
@@ -58,7 +58,7 @@
 //                 Array.Resize(ref _cubes, _cubes.Length + 1);
 //                 _cubes[_cubes.GetUpperBound(0)] = newPlayer;
 //                 _cubesById[counter] = newPlayer;
-//                 _pp.CreatePukcet(counter.ToString(), Pucket.Connected);
+//                 _pp.CreatePukcet(counter.ToString(), Pucket.UpdatePlayersInfo);
 //             });
 //         }
 //     }

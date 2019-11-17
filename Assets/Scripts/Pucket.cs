@@ -4,7 +4,7 @@ public class Pucket {
     public const int Snapshot = 0;
     public const int Input = 1;
     public const int Connection = 2;
-    public const int Connected = 3;
+    public const int UpdatePlayersInfo = 3;
     public const int Login = 4;
     public const int Logined = 5;
 

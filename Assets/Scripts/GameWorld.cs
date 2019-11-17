@@ -47,9 +47,10 @@ public class GameWorld : MonoBehaviour {
             });
 
             _pp.SubscribeToTopic(Pucket.Snapshot, message => {
+                // agregar al buffer/interpolar el buffer en el update
+
                 string[] cubes = message.Split('\n');
-                foreach (string c in cubes)
-                {
+                foreach (string c in cubes) {
                     if (c.Length == 0) continue;
                     string[] pos = c.Split(';');
                     if (_cubesById.ContainsKey(int.Parse(pos[0]))) {
@@ -59,12 +60,12 @@ public class GameWorld : MonoBehaviour {
                 }
             });
             
-            _pp.SubscribeToTopic(Pucket.Connected, message => {
+            _pp.SubscribeToTopic(Pucket.UpdatePlayersInfo, message => {
                 string[] split = message.Split('-');
                 string[] ids = split[0].Split(';');
                 string[] names = split[1].Split(';');
                 for (int i = 0; i < ids.Length; i++) {
-                    if(ids.Length ==0) continue;
+                    if(ids.Length == 0) continue;
                     GameObject cube = null;
                     if (_cubesById.ContainsKey(int.Parse(ids[i])))
                     {
@@ -101,7 +102,7 @@ public class GameWorld : MonoBehaviour {
                 ids = ids.Remove(ids.Length - 1);
                 names = names.Remove(names.Length - 1);
                 _pp.CreatePukcet(counter.ToString(), Pucket.Logined);
-                _pp.CreatePukcet((ids + '-' + names), Pucket.Connected);
+                _pp.CreatePukcet((ids + '-' + names), Pucket.UpdatePlayersInfo);
             });
         }
     }
@@ -119,6 +120,9 @@ public class GameWorld : MonoBehaviour {
             }
             print(positions);
             _pp.CreatePukcet(positions,Pucket.Snapshot);
+        } else {
+            // interpolar basado en el buffer
+            // predecir a los demas
         }
 
     }
