@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GameWorld : MonoBehaviour {
+    public static long Freim = 0L;
     public bool Server;
     private GameObject[] _cubes;
     private Dictionary<int, GameObject> _cubesById;
@@ -12,6 +13,8 @@ public class GameWorld : MonoBehaviour {
     public GameObject otherPlayerPrefab;
     private int counter = 0;
     private int counterTest = 0;
+    private Bafer bafer;
+    private Boolean apdeitPoss
     private void Start() {
         _cubesById = new Dictionary<int, GameObject>();
         if(Server) {
@@ -31,9 +34,11 @@ public class GameWorld : MonoBehaviour {
         }
 
         if(!Server) {
+            bafer = new Bafer();
             // data de login? ip? name?
-            _pp.SubscribeToTopic(Pucket.Logined, message => {
+            _pp.SubscribeToTopic(Pucket.Logined, (message, order) => {
                 Debug.Log("LOGINNEEEEDDDD");
+                Freim = order;
                 int id = int.Parse(message);
                 GameObject newPlayer = Instantiate(playerPrefab);
                 newPlayer.name = "CualquierCosa";
@@ -43,21 +48,26 @@ public class GameWorld : MonoBehaviour {
                 _cubesById[id] = newPlayer;
             });
 
-            _pp.SubscribeToTopic(Pucket.Snapshot, message => {
+            _pp.SubscribeToTopic(Pucket.Snapshot, (message, order) => {
                 // agregar al buffer/interpolar el buffer en el update
+                bafer.add(order, message);
+                
+                // guardame en el buffer
+                // string[] cubes = message.Split('\n');
+                // // dame el sig pack dle buffer
 
-                string[] cubes = message.Split('\n');
-                foreach (string c in cubes) {
-                    if (c.Length == 0) continue;
-                    string[] pos = c.Split(';');
-                    if (_cubesById.ContainsKey(int.Parse(pos[0]))) {
-                        _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3(float.Parse(pos[1]),
-                            float.Parse(pos[2]), float.Parse(pos[3]));
-                    }
-                }
+                // // for tiene q hacerse en un update
+                // foreach (string c in cubes) {
+                //     if (c.Length == 0) continue;
+                //     string[] pos = c.Split(';');
+                //     if (_cubesById.ContainsKey(int.Parse(pos[0]))) {
+                //         _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3(float.Parse(pos[1]),
+                //             float.Parse(pos[2]), float.Parse(pos[3]));
+                //     }
+                // }
             });
             
-            _pp.SubscribeToTopic(Pucket.UpdatePlayersInfo, message => {
+            _pp.SubscribeToTopic(Pucket.UpdatePlayersInfo, (message, order) => {
                 string[] split = message.Split('-');
                 string[] ids = split[0].Split(';');
                 string[] names = split[1].Split(';');
@@ -78,7 +88,7 @@ public class GameWorld : MonoBehaviour {
                 }
             });
         } else {
-            _pp.SubscribeToTopic(Pucket.Login, message => {
+            _pp.SubscribeToTopic(Pucket.Login, (message, order) => {
                 print("NEW USER");
                 print(message);
                 GameObject newPlayer = Instantiate(playerPrefab);
@@ -108,7 +118,7 @@ public class GameWorld : MonoBehaviour {
         // print(Time.deltaTime);
         string positions = "";
         _pp.Update();
-        if (Server && counterTest++ % 100 == 0) {
+        if (Server && Freim % 100 == 0) {
             foreach (var cube in _cubes) {
                 Vector3 pos = cube.gameObject.transform.position;
                 Quaternion rot = cube.gameObject.transform.rotation;
@@ -118,9 +128,36 @@ public class GameWorld : MonoBehaviour {
             print(positions);
             _pp.CreatePukcet(positions,Pucket.Snapshot);
         } else {
-            // interpolar basado en el buffer
+            Bafer.Pocket lastPacket = bafer.peakEnd();
+            if(lastPacket != null && lastPacket.horder > Freim + 60) {
+                apdeitPoss = true;
+                Bafer.Pocket first = bafer.peak();
+                long interPolationSteps = first.horder - Freim;
+                // interpolar basado en el buffer
+                string[] cubes = first.possisions.Split('\n');
+                // for tiene q hacerse en un update
+                foreach (string c in cubes) {
+                    if (c.Length == 0) continue;
+                    string[] pos = c.Split(';');
+                    if (_cubesById.ContainsKey(int.Parse(pos[0]))) {
+                        //lerp
+                        _cubesById[int.Parse(pos[0])].gameObject.transform.position = 
+                            Vector3.Lerp(_cubesById[int.Parse(pos[0])].gameObject.transform.position, 
+                            new Vector3(float.Parse(pos[1]), float.Parse(pos[2]), float.Parse(pos[3])), 
+                            1f/interPolationSteps);
+                        _cubesById[int.Parse(pos[0])].gameObject.transform.rotation = 
+                            Quaternion.Lerp(_cubesById[int.Parse(pos[0])].gameObject.transform.rotation, 
+                            new Quaternion(float.Parse(pos[4]), float.Parse(pos[5]), float.Parse(pos[6]), float.Parse(pos[7])), 
+                            1f/interPolationSteps);
+                    }
+                }
+                if(interPolationSteps == 1){
+                    bafer.removeFirst();
+                }
+            }
             // predecir a los demas
         }
 
+        Freim++;        
     }
 }

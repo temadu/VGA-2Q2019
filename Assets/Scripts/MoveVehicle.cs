@@ -33,7 +33,7 @@ public class MoveVehicle : MonoBehaviour
         me = this.GetComponent<CubeClass>();
     }
 
-    public void HandleUpdate(string message) {
+    public void HandleUpdate(string message, long order) {
         string[] split = message.Split(';');
         int id = int.Parse(split[0]);
         char[] charArr = split[1].ToCharArray();

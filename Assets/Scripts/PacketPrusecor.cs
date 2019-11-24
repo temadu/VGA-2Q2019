@@ -101,7 +101,7 @@ public sealed class PacketPrusecor {
 		_connection.Send(p.ToString());
 	}
 
-	public void SubscribeToTopic(int topic, Action<string> obs) {
+	public void SubscribeToTopic(int topic, Action<string, long> obs) {
 		switch (topic) {
 			case Pucket.Snapshot:
 				_unrelisbasle.addObserver(obs, topic);

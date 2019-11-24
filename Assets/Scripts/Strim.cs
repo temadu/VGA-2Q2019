@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class Strim {
 	private long _order = 0L;
-	private Dictionary<int, List<Action<string>>> _observers;
+	private Dictionary<int, List<Action<string, long>>> _observers;
 	private List<Pucket> _puckets;
 	private List<Pucket> _acks;
 	private bool _reliabilaite;
@@ -15,7 +15,7 @@ public class Strim {
 	public Strim(bool realiabitiliy) {
 		_puckets = new List<Pucket>();
 		_acks = new List<Pucket>();
-		_observers = new Dictionary<int, List<Action<string>>>();
+		_observers = new Dictionary<int, List<Action<string, long>>>();
 		_reliabilaite = realiabitiliy;
 	}
 	
@@ -24,9 +24,9 @@ public class Strim {
 			_puckets = _puckets.Where(pq => pq.Order > p.Order).ToList();
 		} else {
 			if(!_observers.ContainsKey(p.Topic)){
-				_observers[p.Topic] = new List<Action<string>>();
+				_observers[p.Topic] = new List<Action<string, long>>();
 			}
-			_observers[p.Topic].ForEach(obs => obs(p.Data));
+			_observers[p.Topic].ForEach(obs => obs(p.Data, p.Order));
 			if (_reliabilaite) { //crear ack
 				CreatePacket(p.Order.ToString(), p.Topic, true);
 			}
@@ -34,7 +34,7 @@ public class Strim {
 	}
 
 	public Pucket CreatePacket(string data, int topic, bool ack=false) {
-		Pucket q = new Pucket(topic, _order++, data, ack);
+		Pucket q = new Pucket(topic, GameWorld.Freim, data, ack);
 		if (ack) {
 			_acks.Add(q);
 		} else {
@@ -44,9 +44,9 @@ public class Strim {
 		return q;
 	}
 
-	public void addObserver(Action<string> obs, int topic) {
+	public void addObserver(Action<string, long> obs, int topic) {
 		if(!_observers.ContainsKey(topic)){
-			_observers[topic] = new List<Action<string>>();
+			_observers[topic] = new List<Action<string, long>>();
 		}
 		_observers[topic].Add(obs);
 	}

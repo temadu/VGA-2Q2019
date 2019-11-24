@@ -10,7 +10,7 @@ public class CubeClass : MonoBehaviour {
 	public string Name;
 	// Use this for initialization
 	void Start () {
-		_position = gameObject.transform.position;		
+		_position = gameObject.transform.position;
 	}
 	
 	// Update is called once per frame
