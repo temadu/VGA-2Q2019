@@ -126,7 +126,7 @@ public class GameWorld : MonoBehaviour {
             }
             print(positions);
             _pp.CreatePukcet(positions,Pucket.Snapshot);
-        } else {
+        } else if(!Server){
             Bafer.Pocket lastPacket = bafer.peakEnd();
             if(lastPacket != null && lastPacket.horder > Freim + 60) {
                 Bafer.Pocket first = bafer.peak();
