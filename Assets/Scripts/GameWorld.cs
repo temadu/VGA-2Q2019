@@ -14,7 +14,6 @@ public class GameWorld : MonoBehaviour {
     private int counter = 0;
     private int counterTest = 0;
     private Bafer bafer;
-    private Boolean apdeitPoss
     private void Start() {
         _cubesById = new Dictionary<int, GameObject>();
         if(Server) {
@@ -130,7 +129,6 @@ public class GameWorld : MonoBehaviour {
         } else {
             Bafer.Pocket lastPacket = bafer.peakEnd();
             if(lastPacket != null && lastPacket.horder > Freim + 60) {
-                apdeitPoss = true;
                 Bafer.Pocket first = bafer.peak();
                 long interPolationSteps = first.horder - Freim;
                 // interpolar basado en el buffer

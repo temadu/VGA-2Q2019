@@ -26,15 +26,23 @@ public class Bafer {
     }
 
     public Pocket peak(){
-        return p.Values[0];
+        if(p.Count != 0) {
+            return p.Values[0];
+        }
+        return null;
     }
 
     public Pocket peakEnd(){
+        if(p.Count == 0) {
+            return null;
+        }
         return p.Values[p.Count - 1];
     }
 
     public void removeFirst(){
-        p.RemoveAt(0);
+        if(p.Count != 0) {
+            p.RemoveAt(0);
+        }
     }
 
 
