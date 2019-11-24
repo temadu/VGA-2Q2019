@@ -38,6 +38,7 @@ public class GameWorld : MonoBehaviour {
             _pp.SubscribeToTopic(Pucket.Logined, (message, order) => {
                 Debug.Log("LOGINNEEEEDDDD");
                 Freim = order;
+                print(order);
                 int id = int.Parse(message);
                 GameObject newPlayer = Instantiate(playerPrefab);
                 newPlayer.name = "CualquierCosa";
@@ -127,10 +128,13 @@ public class GameWorld : MonoBehaviour {
             print(positions);
             _pp.CreatePukcet(positions,Pucket.Snapshot);
         } else if(!Server){
-            Bafer.Pocket lastPacket = bafer.peakEnd();
-            if(lastPacket != null && lastPacket.horder > Freim + 60) {
-                Bafer.Pocket first = bafer.peak();
+            Bafer.Pocket first = bafer.peak();
+            print(first.horder);
+            print(Freim);
+            if(first != null && first.horder + 200 < Freim) {
                 long interPolationSteps = first.horder - Freim;
+                print(Freim);
+                print(interPolationSteps);
                 // interpolar basado en el buffer
                 string[] cubes = first.possisions.Split('\n');
                 // for tiene q hacerse en un update
@@ -149,7 +153,7 @@ public class GameWorld : MonoBehaviour {
                             1f/interPolationSteps);
                     }
                 }
-                if(interPolationSteps == 1){
+                if(interPolationSteps <= 1){
                     bafer.removeFirst();
                 }
             }
