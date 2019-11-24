@@ -15,6 +15,12 @@ public class UdpConnection
     private bool threadRunning = false;
     private string senderIp;
     private int senderPort;
+
+
+    public bool randomLag = false;
+    public float msLag = 0;
+    public float packetDropChance = 0;
+    
  
     public void StartConnection(string sendIp, int sendPort, int receivePort)
     {

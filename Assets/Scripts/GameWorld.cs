@@ -32,9 +32,6 @@ public class GameWorld : MonoBehaviour {
 
         if(!Server) {
             // data de login? ip? name?
-            Debug.Log("Sending LOGIN");
-            _pp.CreatePukcet("neim", Pucket.Login);
-
             _pp.SubscribeToTopic(Pucket.Logined, message => {
                 Debug.Log("LOGINNEEEEDDDD");
                 int id = int.Parse(message);

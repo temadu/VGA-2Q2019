@@ -7,6 +7,7 @@ public class Pucket {
     public const int UpdatePlayersInfo = 3;
     public const int Login = 4;
     public const int Logined = 5;
+    public const int Logut = 6;
 
        
     public int Topic;
