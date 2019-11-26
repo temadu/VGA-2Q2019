@@ -37,8 +37,6 @@ public class GameWorld : MonoBehaviour {
             // data de login? ip? name?
             _pp.SubscribeToTopic(Pucket.Logined, (message, order) => {
                 Debug.Log("LOGINNEEEEDDDD");
-                Freim = order;
-                print(order);
                 int id = int.Parse(message);
                 GameObject newPlayer = Instantiate(playerPrefab);
                 newPlayer.name = "CualquierCosa";
@@ -115,10 +113,10 @@ public class GameWorld : MonoBehaviour {
     }
 
     public void Update() {
-        // print(Time.deltaTime);
-        string positions = "";
         _pp.Update();
-        if (Server && Freim % 100 == 0) {
+        if (Server) {
+          if(Freim % 10 == 0){
+            string positions = "";
             foreach (var cube in _cubes) {
                 Vector3 pos = cube.gameObject.transform.position;
                 Quaternion rot = cube.gameObject.transform.rotation;
@@ -127,11 +125,36 @@ public class GameWorld : MonoBehaviour {
             }
             print(positions);
             _pp.CreatePukcet(positions,Pucket.Snapshot);
-        } else if(!Server){
+          }
+          Freim++;        
+        } else {
             Bafer.Pocket first = bafer.peak();
             print(first.horder);
             print(Freim);
-            if(first != null && first.horder + 200 < Freim) {
+            if(first == null){
+                Freim = 0;
+                return;
+            }
+
+            if(Freim == 0){
+                if(bafer.peakEnd().horder > first.horder + 120){
+                    Freim = first.horder;
+                    // Seteo in interpolar
+                    string[] cubes = first.possisions.Split('\n');
+                    foreach (string c in cubes) {
+                      if (c.Length == 0) continue;
+                      string[] pos = c.Split(';');
+                      // Puede ser que estos cubosById no esten? 
+                      if (_cubesById.ContainsKey(int.Parse(pos[0]))) {
+                        _cubesById[int.Parse(pos[0])].gameObject.transform.position = new Vector3(float.Parse(pos[1]), float.Parse(pos[2]), float.Parse(pos[3]));
+                        _cubesById[int.Parse(pos[0])].gameObject.transform.rotation = new Quaternion(float.Parse(pos[4]), float.Parse(pos[5]), float.Parse(pos[6]), float.Parse(pos[7]));
+                      }
+                    }
+                    bafer.removeFirst();
+                    // No se si aca va un frame++. Creo que no importa mucho igual.
+                }
+            } else {
+                //Interpolo
                 long interPolationSteps = first.horder - Freim;
                 print(Freim);
                 print(interPolationSteps);
@@ -156,10 +179,10 @@ public class GameWorld : MonoBehaviour {
                 if(interPolationSteps <= 1){
                     bafer.removeFirst();
                 }
+                Freim++;
             }
             // predecir a los demas
         }
 
-        Freim++;        
     }
 }
