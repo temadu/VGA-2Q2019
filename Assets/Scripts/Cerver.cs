@@ -35,11 +35,12 @@ public class Cerver : MonoBehaviour
     {
       print("NEW USER");
       print(message);
+	  string[] ipname = message.Split(';');
       GameObject newPlayer = Instantiate(playerPrefab);
       newPlayer.AddComponent<Rigidbody>();
       newPlayer.AddComponent<MoveVehicle>();
       newPlayer.GetComponent<CubeClass>().Id = ++counter;
-      newPlayer.GetComponent<CubeClass>().Name = message;
+      newPlayer.GetComponent<CubeClass>().Name = ipname[1];
       Array.Resize(ref _cubes, _cubes.Length + 1);
       _cubes[_cubes.GetUpperBound(0)] = newPlayer;
       _cubesById[counter] = newPlayer;
@@ -53,7 +54,8 @@ public class Cerver : MonoBehaviour
 
       ids = ids.Remove(ids.Length - 1);
       names = names.Remove(names.Length - 1);
-      _pp.CreatePukcet(counter.ToString(), Pucket.Logined);
+	  _pp.AddIp(counter, ipname[0]);
+      _pp.CreatePukcet(counter.ToString(), Pucket.Logined, counter);
       _pp.CreatePukcet((ids + '-' + names), Pucket.UpdatePlayersInfo);
       });
     

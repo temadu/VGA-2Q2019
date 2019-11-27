@@ -25,12 +25,12 @@ public sealed class PacketPrusecor {
 		_reliabelSlow = new Strim(true);
 		
 		
-		string sendIp = "192.168.1.54";
+		string serverIp = "192.168.1.54";
 		int sendPort = 11000;
 		int receivePort = 11000;
  
 		_connection = new UdpConnection();
-		_connection.StartConnection(sendIp, sendPort, receivePort);
+		_connection.StartConnection(serverIp, sendPort, receivePort);
 	}
 
 	public static PacketPrusecor Instance {
@@ -80,25 +80,28 @@ public sealed class PacketPrusecor {
 		}
 	}
 
-	public void CreatePukcet(string data, int topic) {
+	public void CreatePukcet(string data, int topic, int id=-1) {
 		Pucket p = null;
 		switch (topic) {
 			case Pucket.Snapshot:
 				p =_unrelisbasle.CreatePacket(data, topic);
+				_connection.SendAll(p.ToString());
 				break;
 			case Pucket.Input:
 				p =_relasibFast.CreatePacket(data, topic);
+				_connection.Send(p.ToString(), id);		
 				break;
-			case Pucket.Connection:
 			case Pucket.UpdatePlayersInfo:
+				p =_reliabelSlow.CreatePacket(data, topic);
+				_connection.SendAll(p.ToString());
+				break;	
 			case Pucket.Login:
 			case Pucket.Logined:
 				Debug.Log(topic);
 				p =_reliabelSlow.CreatePacket(data, topic);
+				_connection.Send(p.ToString(), id);				
 				break;
 		}
-
-		_connection.Send(p.ToString());
 	}
 
 	public void SubscribeToTopic(int topic, Action<string, long> obs) {
@@ -109,7 +112,6 @@ public sealed class PacketPrusecor {
 			case Pucket.Input:
 				_relasibFast.addObserver(obs, topic);
 				break;
-			case Pucket.Connection:
 			case Pucket.UpdatePlayersInfo:
 			case Pucket.Login:
 			case Pucket.Logined:
@@ -118,5 +120,8 @@ public sealed class PacketPrusecor {
 		}
 	}
 
+	public void AddIp(int id, string ip){
+		_connection.addIp(id, ip);
+	}
 }
 

@@ -58,8 +58,6 @@ public class Slient : MonoBehaviour {
         _pp.Update();
         
         Bafer.Pocket first = bafer.peak();
-        print(first.horder);
-        print(Freim);
         if(first == null){
             Freim = 0;
             return;

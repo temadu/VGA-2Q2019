@@ -6,7 +6,6 @@ using System;
 using UnityEngine;
 
 public class Strim {
-	private long _order = 0L;
 	private Dictionary<int, List<Action<string, long>>> _observers;
 	private List<Pucket> _puckets;
 	private List<Pucket> _acks;

@@ -13,17 +13,22 @@ public class UdpConnection
     private readonly Queue<string> incomingQueue = new Queue<string>();
     Thread receiveThread;
     private bool threadRunning = false;
-    private string senderIp;
+    private string serverIp;
     private int senderPort;
-
+    private Dictionary<int, string> ips;
 
     public bool randomLag = false;
     public float msLag = 0;
     public float packetDropChance = 0;
     
+
+    public void addIp(int id, string ip){
+        ips.Add(id, ip);
+    }
  
-    public void StartConnection(string sendIp, int sendPort, int receivePort)
+    public void StartConnection(string serverIp, int sendPort, int receivePort)
     {
+        ips = new Dictionary<int, string>();
         try { udpClient = new UdpClient(receivePort); }
         catch (Exception e)
         {
@@ -31,11 +36,11 @@ public class UdpConnection
             return;
         }
         Debug.Log("Created receiving client at ip  and port " + receivePort);
-        senderIp = sendIp;
+        this.serverIp = serverIp;
         senderPort = sendPort;
  
-        Debug.Log("Set sendee at ip " + sendIp + " and port " + sendPort);
- 
+        Debug.Log("Set sendee at ip " + serverIp + " and port " + sendPort);
+
         StartReceiveThread();
     }
  
@@ -93,12 +98,23 @@ public class UdpConnection
         return pendingMessages;
     }
  
-    public void Send(string message)
-    {
-        // Debug.Log(String.Format("Send msg to ip:{0} port:{1} msg:{2}",senderIp,senderPort,message));
-        IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse(senderIp), senderPort);
+    public void Send(string message, int id=-1) {
+        IPEndPoint endpoint;
+        if(id == -1){
+            endpoint = new IPEndPoint(IPAddress.Parse(this.serverIp), senderPort);  
+        } else {
+            endpoint = new IPEndPoint(IPAddress.Parse(ips[id]), senderPort);
+        }
         Byte[] sendBytes = Encoding.UTF8.GetBytes(message);
-        udpClient.Send(sendBytes, sendBytes.Length, serverEndpoint);
+        udpClient.Send(sendBytes, sendBytes.Length, endpoint);
+    }
+
+    public void SendAll(string message) {
+        foreach (string ip in ips.Values) {
+            IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse(ip), senderPort);
+            Byte[] sendBytes = Encoding.UTF8.GetBytes(message);
+            udpClient.Send(sendBytes, sendBytes.Length, serverEndpoint);
+        }
     }
  
     public void Stop()
