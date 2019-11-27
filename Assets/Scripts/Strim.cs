@@ -34,7 +34,7 @@ public class Strim {
 	}
 
 	public Pucket CreatePacket(string data, int topic, bool ack=false) {
-		Pucket q = new Pucket(topic, GameWorld.Freim, data, ack);
+		Pucket q = new Pucket(topic, Slient.Freim, data, ack);
 		if (ack) {
 			_acks.Add(q);
 		} else {
