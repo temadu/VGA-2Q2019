@@ -12,6 +12,8 @@ public class MoveVehicle : MonoBehaviour
     [Range(1, 1000)]
     public float dragDividend = 500;
 
+    public float speed = 0.05f;
+
     private PacketPrusecor _pp = PacketPrusecor.Instance;
     private CubeClass me;
 
@@ -39,16 +41,20 @@ public class MoveVehicle : MonoBehaviour
         char[] charArr = split[1].ToCharArray();
         
         if(me.Id == id) {
+            Vector3 movement = Vector3.zero;
             foreach(char c in charArr) {
                 Debug.Log(c);
-                if(this.IsGrounded()) {
-                    Debug.Log("grounder");
+                movement = movement + keyMappings[c];
+
+                // if(this.IsGrounded()) {
+                //     Debug.Log("grounder");
                     
-                    Vector3 objectForce = keyMappings[c] * this.accelerationForce;
-                    this.rigidBody.drag = objectForce.sqrMagnitude / this.dragDividend;
-                    this.rigidBody.AddForce(objectForce);
-                }
+                //     Vector3 objectForce = keyMappings[c] * this.accelerationForce;
+                //     this.rigidBody.drag = objectForce.sqrMagnitude / this.dragDividend;
+                //     this.rigidBody.AddForce(objectForce);
+                // }
             }
+            this.transform.position = this.transform.position + (movement * speed);
         }
     }
 }
