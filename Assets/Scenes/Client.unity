@@ -149,10 +149,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcd2fe907bbf4fb58b8037666451a1d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Server: 0
-  playerPrefab: {fileID: 8217290151927147212, guid: 9f5bdeeb53c8e1e41aed9d97f25c8936,
+  Server: 1
+  playerPrefab: {fileID: 5339935888665684990, guid: cd6cefb640e60b84eab153f0d35f8591,
     type: 3}
-  otherPlayerPrefab: {fileID: 1805196822561590, guid: 9e1f0846531ea1147ba12bbdd8c2e3c1,
+  otherPlayerPrefab: {fileID: 5339935888665684990, guid: cd6cefb640e60b84eab153f0d35f8591,
     type: 3}
 --- !u!4 &45912362
 Transform:
