@@ -11,8 +11,10 @@ public class Cerver : MonoBehaviour
   private PacketPrusecor _pp = PacketPrusecor.Instance;
   public GameObject playerPrefab;
   private int counter = 0;
+  public bool client;
   private void Start()
   {
+	_pp.initStrims(client);
     _cubesById = new Dictionary<int, GameObject>();
     
     _cubes = GameObject.FindGameObjectsWithTag("Cubo");

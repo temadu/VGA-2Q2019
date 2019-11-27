@@ -13,16 +13,15 @@ public sealed class PacketPrusecor {
 	private Strim _reliabelSlow;
 	private Strim _relasibFast;
 	private UdpConnection _connection;
-
 	// Use this for initialization
 	private PacketPrusecor() {
 //		_unreliabables= new List<Strim>();
 //		_relaibelsFast = new List<Strim>();
 //		_reliablesSlow = new List<Strim>();
 		
-		_unrelisbasle = new Strim(false);
-		_relasibFast = new Strim(true);
-		_reliabelSlow = new Strim(true);
+		// _unrelisbasle = new Strim(false);
+		// _relasibFast = new Strim(true);
+		// _reliabelSlow = new Strim(true);
 		
 		
 		string serverIp = "192.168.1.54";
@@ -37,7 +36,12 @@ public sealed class PacketPrusecor {
 		get { return INSTANCE; }
 	}
 	
-	
+	public void initStrims(bool client){
+		_unrelisbasle = new Strim(false, client);
+		_relasibFast = new Strim(true, client);
+		_reliabelSlow = new Strim(true, client);
+		
+	}
 	
 	// Update is called once per frame
 	

@@ -149,11 +149,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcd2fe907bbf4fb58b8037666451a1d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Server: 1
   playerPrefab: {fileID: 5339935888665684990, guid: cd6cefb640e60b84eab153f0d35f8591,
     type: 3}
-  otherPlayerPrefab: {fileID: 5339935888665684990, guid: cd6cefb640e60b84eab153f0d35f8591,
-    type: 3}
+  client: 1
 --- !u!4 &45912362
 Transform:
   m_ObjectHideFlags: 0

@@ -9,7 +9,10 @@ public class Slient : MonoBehaviour {
     private PacketPrusecor _pp = PacketPrusecor.Instance;
     public GameObject playerPrefab;
     private Bafer bafer;
+    public bool client;
     private void Start() {
+    	_pp.initStrims(client);
+        
         _cubesById = new Dictionary<int, GameObject>();
 
         bafer = new Bafer();

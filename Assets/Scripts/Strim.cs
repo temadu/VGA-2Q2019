@@ -10,8 +10,10 @@ public class Strim {
 	private List<Pucket> _puckets;
 	private List<Pucket> _acks;
 	private bool _reliabilaite;
+	private bool client;
 
-	public Strim(bool realiabitiliy) {
+	public Strim(bool realiabitiliy, bool client) {
+		this.client = client;
 		_puckets = new List<Pucket>();
 		_acks = new List<Pucket>();
 		_observers = new Dictionary<int, List<Action<string, long>>>();
@@ -33,7 +35,7 @@ public class Strim {
 	}
 
 	public Pucket CreatePacket(string data, int topic, bool ack=false) {
-		Pucket q = new Pucket(topic, Slient.Freim, data, ack);
+		Pucket q = new Pucket(topic, client ? Slient.Freim: Cerver.Freim, data, ack);
 		if (ack) {
 			_acks.Add(q);
 		} else {
