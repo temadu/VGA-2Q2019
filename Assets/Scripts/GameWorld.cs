@@ -50,6 +50,7 @@ public class GameWorld : MonoBehaviour {
                 // agregar al buffer/interpolar el buffer en el update
                 bafer.add(order, message);
                 
+                
                 // guardame en el buffer
                 // string[] cubes = message.Split('\n');
                 // // dame el sig pack dle buffer
