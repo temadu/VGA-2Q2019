@@ -124,6 +124,21 @@ public sealed class PacketPrusecor {
 		}
 	}
 
+	public void SubscribeToAckTopic(int topic, Action<long, long> obs) {
+		switch (topic) {
+			case Pucket.Snapshot:
+			  break;
+			case Pucket.Input:
+				_relasibFast.addAckObserver(obs, topic);
+				break;
+			case Pucket.UpdatePlayersInfo:
+			case Pucket.Login:
+			case Pucket.Logined:
+				_reliabelSlow.addAckObserver(obs, topic);
+				break;
+		}
+	}
+
 	public void AddIp(int id, string ip){
 		_connection.addIp(id, ip);
 	}

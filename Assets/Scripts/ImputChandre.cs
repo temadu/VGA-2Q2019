@@ -27,7 +27,8 @@ public class ImputChandre : MonoBehaviour
 
     void Start(){
         me = this.GetComponent<CubeClass>();
-    }
+        _pp.SubscribeToAckTopic(Pucket.Input, HandleAcknowledge);
+  }
 
     void Update() {
         string s = me.Id + ";";
@@ -40,7 +41,7 @@ public class ImputChandre : MonoBehaviour
         if(inputs != "") {
             Debug.Log(s + inputs);
             _pp.CreatePukcet(s + inputs, Pucket.Input);
-            ApplyMovement(inputs);
+            // ApplyMovement(inputs);
         }
 
         // predecir/simular mis movimientos
@@ -55,5 +56,10 @@ public class ImputChandre : MonoBehaviour
       movement = movement + keyToVector[c];
     }
     this.transform.position = this.transform.position + (movement * speed);
+  }
+
+  public void HandleAcknowledge(long clOrder, long svOrder){
+    // print("Ack received, slientFreim: " + clOrder + ", cerverFreim:" + svOrder);
+    print("Hundled");
   }
 }

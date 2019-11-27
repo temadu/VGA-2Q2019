@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class Strim {
 	private Dictionary<int, List<Action<string, long>>> _observers;
+	private Dictionary<int, List<Action<long, long>>> _ackObservers;
 	private List<Pucket> _puckets;
 	private List<Pucket> _acks;
 	private bool _reliabilaite;
@@ -17,12 +18,18 @@ public class Strim {
 		_puckets = new List<Pucket>();
 		_acks = new List<Pucket>();
 		_observers = new Dictionary<int, List<Action<string, long>>>();
+		_ackObservers = new Dictionary<int, List<Action<long, long>>>();
 		_reliabilaite = realiabitiliy;
 	}
 	
 	public void ReceivePacket(Pucket p) {
 		if (p.Ack) {
-			_puckets = _puckets.Where(pq => pq.Order > p.Order).ToList();
+      Debug.Log("Ack received, slientFreim: " + p.Order + ", cerverFreim:" + long.Parse(p.Data));
+      _puckets = _puckets.Where(pq => pq.Order > long.Parse(p.Data)).ToList();
+      if(!_ackObservers.ContainsKey(p.Topic)){
+				_ackObservers[p.Topic] = new List<Action<long, long>>();
+			}
+			_ackObservers[p.Topic].ForEach(obs => obs(p.Order, long.Parse(p.Data)));
 		} else {
 			if(!_observers.ContainsKey(p.Topic)){
 				_observers[p.Topic] = new List<Action<string, long>>();
@@ -50,6 +57,13 @@ public class Strim {
 			_observers[topic] = new List<Action<string, long>>();
 		}
 		_observers[topic].Add(obs);
+	}
+
+	public void addAckObserver(Action<long, long> obs, int topic) {
+		if(!_ackObservers.ContainsKey(topic)){
+			_ackObservers[topic] = new List<Action<long, long>>();
+		}
+		_ackObservers[topic].Add(obs);
 	}
 
 	public List<Pucket> GetPockets() {
