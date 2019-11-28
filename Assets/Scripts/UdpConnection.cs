@@ -5,10 +5,14 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using UnityEngine;
- 
+using Random = System.Random;
+
 public class UdpConnection
 {
     private UdpClient udpClient;
+    
+    const int SEND_DELAY = 5000;
+    const double DROP_PROBABILITY = 0.7;
  
     private readonly Queue<string> incomingQueue = new Queue<string>();
     Thread receiveThread;
@@ -105,16 +109,22 @@ public class UdpConnection
         } else {
             endpoint = new IPEndPoint(IPAddress.Parse(ips[id]), senderPort);
         }
-        Byte[] sendBytes = Encoding.UTF8.GetBytes(message);
-        udpClient.Send(sendBytes, sendBytes.Length, endpoint);
+        (new Thread(() => SendMessageThreaded(udpClient, message, endpoint))).Start();
     }
 
     public void SendAll(string message) {
         foreach (string ip in ips.Values) {
             IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse(ip), senderPort);
-            Byte[] sendBytes = Encoding.UTF8.GetBytes(message);
-            udpClient.Send(sendBytes, sendBytes.Length, serverEndpoint);
+            (new Thread(() => SendMessageThreaded(udpClient, message, serverEndpoint))).Start();
         }
+    }
+    
+    private void SendMessageThreaded(UdpClient client, string message, IPEndPoint endpoint) {
+        if(SEND_DELAY>0) Thread.Sleep(SEND_DELAY);
+        Random random = new Random();
+        if (random.NextDouble() > DROP_PROBABILITY) return;
+        Byte[] sendBytes = Encoding.UTF8.GetBytes(message);
+        client.Send(sendBytes, sendBytes.Length, endpoint);
     }
  
     public void Stop()
