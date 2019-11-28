@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,6 +32,9 @@ public class ArtificialLag : MonoBehaviour{
     setMsLag(msLagSlider.value);
     setPacketDropChance(packetDropSlider.value);
     // Apply cambios en el UdpConnection
+    UdpConnection.SEND_DELAY = (int)(msLag*1000);
+    UdpConnection.DROP_PROBABILITY = packetDropChance;
+
   }
 
   private void Start(){

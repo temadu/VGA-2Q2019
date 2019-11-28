@@ -11,8 +11,8 @@ public class UdpConnection
 {
     private UdpClient udpClient;
     
-    const int SEND_DELAY = 1;
-    const double DROP_PROBABILITY = 0.1;
+    public static int SEND_DELAY = 1;
+    public static double DROP_PROBABILITY = 0.1;
  
     private readonly Queue<string> incomingQueue = new Queue<string>();
     Thread receiveThread;
