@@ -75,7 +75,6 @@ public class Cerver : MonoBehaviour
         positions += cube.GetComponent<CubeClass>().Id + ";" + pos.x + ";" + pos.y + ";" + pos.z + ";" + rot.w +
                       ";" + rot.x + ";" + rot.y + ";" + rot.z + "\n";
       }
-      print(positions);
       _pp.CreatePukcet(positions, Pucket.Snapshot);
     }
     Freim++;
