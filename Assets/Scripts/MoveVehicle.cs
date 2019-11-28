@@ -56,6 +56,6 @@ public class MoveVehicle : MonoBehaviour
             }
             this.transform.position = this.transform.position + (movement * speed);
         }
-        _pp.CreatePukcet(order+";"+Cerver.Freim.ToString(), Pucket.Input, id, true);
+        _pp.CreatePukcet(order.ToString(), Pucket.Input, id, true);
     }
 }

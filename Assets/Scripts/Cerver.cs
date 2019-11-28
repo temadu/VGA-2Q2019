@@ -57,7 +57,7 @@ public class Cerver : MonoBehaviour
       names = names.Remove(names.Length - 1);
 	    _pp.AddIp(counter, ipname[0]);
       //Ack
-      _pp.CreatePukcet(order+";"+Cerver.Freim.ToString(), Pucket.Login, counter, true);
+      _pp.CreatePukcet(order.ToString(), Pucket.Login, counter, true);
       _pp.CreatePukcet(counter.ToString(), Pucket.Logined, counter);
       _pp.CreatePukcet((ids + '-' + names), Pucket.UpdatePlayersInfo);
       });
