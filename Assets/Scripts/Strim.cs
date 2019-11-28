@@ -24,7 +24,7 @@ public class Strim {
 	
 	public void ReceivePacket(Pucket p) {
 		if (p.Ack) {
-			Debug.Log("Ack received, slientFreim: " + p.Order + ", cerverFreim:" + p.Data);
+			Debug.Log("Ack received, orderSent: " + p.Order + ", frameACK:" + p.Data);
 			_puckets = _puckets.Where(pq => pq.Order > long.Parse(p.Data)).ToList();
 			if(!_ackObservers.ContainsKey(p.Topic)){
 				_ackObservers[p.Topic] = new List<Action<long, long>>();

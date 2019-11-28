@@ -60,6 +60,6 @@ public class ImputChandre : MonoBehaviour
 
   public void HandleAcknowledge(long clOrder, long svOrder){
     // print("Ack received, slientFreim: " + clOrder + ", cerverFreim:" + svOrder);
-    print("Hundled");
+    print("Input Acknowledged: " + clOrder + " " + svOrder);
   }
 }
