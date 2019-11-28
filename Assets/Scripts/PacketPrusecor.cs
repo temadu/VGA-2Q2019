@@ -12,18 +12,9 @@ public sealed class PacketPrusecor {
 	private Strim _unrelisbasle;
 	private Strim _reliabelSlow;
 	private Strim _relasibFast;
-	private UdpConnection _connection;
+	public UdpConnection _connection;
 	// Use this for initialization
 	private PacketPrusecor() {
-//		_unreliabables= new List<Strim>();
-//		_relaibelsFast = new List<Strim>();
-//		_reliablesSlow = new List<Strim>();
-		
-		// _unrelisbasle = new Strim(false);
-		// _relasibFast = new Strim(true);
-		// _reliabelSlow = new Strim(true);
-		
-		
 		string serverIp = "192.168.1.54";
 		int sendPort = 11000;
 		int receivePort = 11000;
@@ -46,11 +37,6 @@ public sealed class PacketPrusecor {
 	// Update is called once per frame
 	
 	// cada message va a ser topic, ack, order, data
-	// topic 0 unr
-	// topic 1 unr
-	// topic 2 rel
-	// topic 3 rel
-	// topic 4 rel-slow
 	public void Update () {
 		foreach (var message in _connection.getMessages()) {
 			// Debug.Log(message);
@@ -66,17 +52,8 @@ public sealed class PacketPrusecor {
 						bool.Parse(splited[1])));
 					break;
 				case Pucket.Login:
-					Debug.Log("login");
-					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
-						bool.Parse(splited[1])));
-					break;					
 				case Pucket.Logined:
-					Debug.Log("logined");
-					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
-						bool.Parse(splited[1])));
-					break;					
 				case Pucket.UpdatePlayersInfo:
-					// cada 1 segundo hacer if
 					_reliabelSlow.ReceivePacket(new Pucket(int.Parse(splited[0]), long.Parse(splited[2]), splited[3],
 						bool.Parse(splited[1])));
 					break;
@@ -84,25 +61,25 @@ public sealed class PacketPrusecor {
 		}
 	}
 
-	public void CreatePukcet(string data, int topic, int id=-1) {
+	public void CreatePukcet(string data, int topic, int id=-1, bool ack = false) {
 		Pucket p = null;
 		switch (topic) {
 			case Pucket.Snapshot:
-				p =_unrelisbasle.CreatePacket(data, topic);
+				p =_unrelisbasle.CreatePacket(data, topic, ack);
 				_connection.SendAll(p.ToString());
 				break;
 			case Pucket.Input:
-				p =_relasibFast.CreatePacket(data, topic);
+				p =_relasibFast.CreatePacket(data, topic, ack);
 				_connection.Send(p.ToString(), id);		
 				break;
 			case Pucket.UpdatePlayersInfo:
-				p =_reliabelSlow.CreatePacket(data, topic);
+				p =_reliabelSlow.CreatePacket(data, topic, ack);
 				_connection.SendAll(p.ToString());
 				break;	
 			case Pucket.Login:
 			case Pucket.Logined:
 				Debug.Log(topic);
-				p =_reliabelSlow.CreatePacket(data, topic);
+				p =_reliabelSlow.CreatePacket(data, topic, ack);
 				_connection.Send(p.ToString(), id);				
 				break;
 		}

@@ -26,6 +26,7 @@ public class Slient : MonoBehaviour {
             newPlayer.AddComponent<ImputChandre>();
             newPlayer.transform.position = new Vector3(0,0,0);
             _cubesById[id] = newPlayer;
+            _pp.CreatePukcet(order+";"+Slient.Freim.ToString(), Pucket.Logined, -1, true);
         });
 
         _pp.SubscribeToTopic(Pucket.Snapshot, (message, order) => {
@@ -53,6 +54,7 @@ public class Slient : MonoBehaviour {
                 cube.GetComponent<CubeClass>().Name = names[i];
                 _cubesById[int.Parse(ids[i])] = cube;
             }
+            _pp.CreatePukcet(order+";"+Slient.Freim.ToString(), Pucket.UpdatePlayersInfo, -1, true);
         });
         
     }
