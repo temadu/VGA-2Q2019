@@ -15,7 +15,7 @@ public sealed class PacketPrusecor {
 	public UdpConnection _connection;
 	// Use this for initialization
 	private PacketPrusecor() {
-		string serverIp = "192.168.1.54";
+		string serverIp = "192.168.1.146";
 		int sendPort = 11000;
 		int receivePort = 11000;
  

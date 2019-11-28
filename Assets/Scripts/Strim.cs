@@ -29,7 +29,7 @@ public class Strim {
 			if(!_ackObservers.ContainsKey(p.Topic)){
 				_ackObservers[p.Topic] = new List<Action<long, long>>();
 			}
-			_ackObservers[p.Topic].ForEach(obs => obs(p.Order, long.Parse(p.Data)));
+			_ackObservers[p.Topic].ForEach(obs => obs(long.Parse(p.Data), p.Order));
 		} else {
 			if(!_observers.ContainsKey(p.Topic)){
 				_observers[p.Topic] = new List<Action<string, long>>();

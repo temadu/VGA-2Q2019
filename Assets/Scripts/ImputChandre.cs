@@ -6,6 +6,10 @@ public class ImputChandre : MonoBehaviour
 {
     private PacketPrusecor _pp = PacketPrusecor.Instance;
     private CubeClass me;
+    public SortedList<long,MuvmentMeid> movements = new SortedList<long,MuvmentMeid>();
+    public Queue<MuvmentMeid> movementsMade = new Queue<MuvmentMeid>();
+    public Queue<MuvmentMeid> posToCheck = new Queue<MuvmentMeid>();
+    public Vector3 lastKnownPosition = Vector3.zero;    
 
     public float speed = 0.05f; 
 
@@ -41,25 +45,97 @@ public class ImputChandre : MonoBehaviour
         if(inputs != "") {
             Debug.Log(s + inputs);
             _pp.CreatePukcet(s + inputs, Pucket.Input);
-            // ApplyMovement(inputs);
+            Vector3 newPos = ApplyMovement(inputs);
+            this.movementsMade.Enqueue(new MuvmentMeid()
+                .setMoves(inputs).setSlientOrder(Slient.Freim).setPos(newPos));
+            this.movements.Add(Slient.Freim, new MuvmentMeid()
+                .setMoves(inputs).setSlientOrder(Slient.Freim).setPos(newPos));
         }
 
-        // predecir/simular mis movimientos
+        ApplyAllMovements();
     }
 
-  public void ApplyMovement(string message){
+  public Vector3 ApplyMovement(string message){
     char[] charArr = message.ToCharArray();
     Vector3 movement = Vector3.zero;
     foreach (char c in charArr)
     {
-      // Debug.Log(c);
       movement = movement + keyToVector[c];
     }
-    this.transform.position = this.transform.position + (movement * speed);
+    return movement;
+  }
+
+  public void applyRealMovement(Vector3 pos, Quaternion rot, long freim){
+      while(true){
+        if(movements.Count == 0)
+            break;
+        
+        MuvmentMeid m = movements.Values[0];
+        if(m.cerverOrder <= freim){
+            movements.RemoveAt(0);
+        } else {
+            break;
+        }
+      }
+      this.lastKnownPosition = pos;
+      this.ApplyAllMovements();
+
+  }
+  public Vector3 ApplyAllMovements(){
+    Vector3 newPos = Vector3.zero;
+    foreach( KeyValuePair<long, MuvmentMeid> kvp in movements )
+    {
+        newPos = newPos + ApplyMovement(kvp.Value.moves);
+    }
+    this.transform.position = lastKnownPosition + (newPos * speed);
+    return this.transform.position;
   }
 
   public void HandleAcknowledge(long clOrder, long svOrder){
-    // print("Ack received, slientFreim: " + clOrder + ", cerverFreim:" + svOrder);
-    print("Input Acknowledged: " + clOrder + " " + svOrder);
+    // print("Input Acknowledged: client:" + clOrder + " server:" + svOrder);
+    print("LAG: " + ((svOrder-clOrder)/60f));
+    while(true){
+        if(movementsMade.Count == 0 || movementsMade.Peek().slientOrder > clOrder){
+            break;
+        }
+        MuvmentMeid m = movementsMade.Dequeue();
+        if(m.slientOrder == clOrder){
+            m.cerverOrder = svOrder;
+            this.posToCheck.Enqueue(m);
+            // print("Moviendo:" + m.slientOrder + "moves" + movementsMade.Count + "posses" + posToCheck.Count);
+            break;
+        }
+    }
+    if(movements.ContainsKey(clOrder)){
+        movements[clOrder].cerverOrder = svOrder;
+    }
+
   }
+
+  public class MuvmentMeid{
+        public long slientOrder;
+        public long cerverOrder;
+        public string moves;
+        public Vector3 pos;
+
+        public MuvmentMeid() {
+        }
+
+        public MuvmentMeid setSlientOrder(long q){
+            this.slientOrder = q;
+            return this;
+        }
+        public MuvmentMeid setCerverOrder(long q){
+            this.cerverOrder = q;
+            return this;
+        }
+        public MuvmentMeid setMoves(string m){
+            this.moves = m;
+            return this;
+        }
+        public MuvmentMeid setPos(Vector3 p){
+            this.pos = p;
+            return this;
+        }
+    }
 }
