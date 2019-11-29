@@ -3,41 +3,41 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Slient : MonoBehaviour {
-    public static long Freim = 0L;
+public class Client : MonoBehaviour {
+    public static long Frame = 0L;
     private Dictionary<int, GameObject> _cubesById;
-    private PacketPrusecor _pp = PacketPrusecor.Instance;
+    private PacketProcessor _pp = PacketProcessor.Instance;
     public GameObject playerPrefab;
-    public Bafer bafer;
+    public Buffer buf;
     public bool client;
-    private int slientID = -2;
-    private ImputChandre slientImputChandre = null;
+    private int clientID = -2;
+    private InputHandler clientInputHandler = null;
     private void Start() {
-    	_pp.initStrims(client);
+    	_pp.initStreams(client);
         
         _cubesById = new Dictionary<int, GameObject>();
 
-        bafer = new Bafer();
+        buf = new Buffer();
         // data de login? ip? name?
-        _pp.SubscribeToTopic(Pucket.Logined, (message, order) => {
+        _pp.SubscribeToTopic(Packet.Logined, (message, order) => {
             Debug.Log("LOGINNEEEEDDDD");
-            slientID = int.Parse(message);
+            clientID = int.Parse(message);
             GameObject newPlayer = Instantiate(playerPrefab);
             newPlayer.name = "CualquierCosa";
-            newPlayer.GetComponent<CubeClass>().Id = slientID;
-            slientImputChandre = newPlayer.AddComponent<ImputChandre>();
+            newPlayer.GetComponent<CubeClass>().Id = clientID;
+            clientInputHandler = newPlayer.AddComponent<InputHandler>();
             newPlayer.transform.position = new Vector3(0,0,0);
-            slientImputChandre.lastKnownPosition = new Vector3(0,0,0);
-            _cubesById[slientID] = newPlayer;
-            _pp.CreatePukcet(order.ToString(), Pucket.Logined, -1, true);
+            clientInputHandler.lastKnownPosition = new Vector3(0,0,0);
+            _cubesById[clientID] = newPlayer;
+            _pp.CreatePacket(order.ToString(), Packet.Logined, -1, true);
         });
 
-        _pp.SubscribeToTopic(Pucket.Snapshot, (message, order) => {
+        _pp.SubscribeToTopic(Packet.Snapshot, (message, order) => {
             // agregar al buffer/interpolar el buffer en el update
-            bafer.add(order, message);            
+            buf.add(order, message);            
         });
         
-        _pp.SubscribeToTopic(Pucket.UpdatePlayersInfo, (message, order) => {
+        _pp.SubscribeToTopic(Packet.UpdatePlayersInfo, (message, order) => {
             string[] split = message.Split('-');
             string[] ids = split[0].Split(';');
             string[] names = split[1].Split(';');
@@ -56,7 +56,7 @@ public class Slient : MonoBehaviour {
                 cube.GetComponent<CubeClass>().Name = names[i];
                 _cubesById[int.Parse(ids[i])] = cube;
             }
-            _pp.CreatePukcet(order.ToString(), Pucket.UpdatePlayersInfo, -1, true);
+            _pp.CreatePacket(order.ToString(), Packet.UpdatePlayersInfo, -1, true);
         });
         
     }
@@ -64,17 +64,17 @@ public class Slient : MonoBehaviour {
     public void Update() {
         _pp.Update();
         
-        Bafer.Pocket first = bafer.peak();
+        Buffer.BufferElem first = buf.peak();
         if(first == null){
-            Freim = 0;
+            Frame = 0;
             return;
         }
 
-        if(Freim == 0){
-            if(bafer.peakEnd().horder > first.horder + 120){
-                Freim = first.horder;
+        if(Frame == 0){
+            if(buf.peakEnd().order > first.order + 10){
+                Frame = first.order;
                 // Seteo in interpolar
-                string[] cubes = first.possisions.Split('\n');
+                string[] cubes = first.positions.Split('\n');
                 foreach (string c in cubes) {
                   if (c.Length == 0) continue;
                   string[] pos = c.Split(';');
@@ -84,29 +84,29 @@ public class Slient : MonoBehaviour {
                     _cubesById[int.Parse(pos[0])].gameObject.transform.rotation = new Quaternion(float.Parse(pos[4]), float.Parse(pos[5]), float.Parse(pos[6]), float.Parse(pos[7]));
                   }
                 }
-                bafer.removeFirst();
+                buf.removeFirst();
                 // No se si aca va un frame++. Creo que no importa mucho igual.
             }
         } else {
             //Interpolo
-            long interPolationSteps = first.horder - Freim;
-            print(Freim);
-            print(interPolationSteps);
+            long interPolationSteps = first.order - Frame;
+            // print(Frame);
+            // print(interPolationSteps);
             // interpolar basado en el buffer
-            string[] cubes = first.possisions.Split('\n');
+            string[] cubes = first.positions.Split('\n');
             // for tiene q hacerse en un update
             foreach (string c in cubes) {
                 if (c.Length == 0) continue;
                 string[] pos = c.Split(';');
                 if (_cubesById.ContainsKey(int.Parse(pos[0]))) {
                     //lerp
-                    if(int.Parse(pos[0]) == slientID){
-                        slientImputChandre.applyRealMovement( Vector3.Lerp(_cubesById[int.Parse(pos[0])].gameObject.transform.position, 
+                    if(int.Parse(pos[0]) == clientID){
+                        clientInputHandler.applyRealMovement( Vector3.Lerp(_cubesById[int.Parse(pos[0])].gameObject.transform.position, 
                             new Vector3(float.Parse(pos[1]), float.Parse(pos[2]), float.Parse(pos[3])), 
                             1f/interPolationSteps),
                             Quaternion.Lerp(_cubesById[int.Parse(pos[0])].gameObject.transform.rotation, 
                             new Quaternion(float.Parse(pos[4]), float.Parse(pos[5]), float.Parse(pos[6]), float.Parse(pos[7])), 
-                            1f/interPolationSteps), Freim
+                            1f/interPolationSteps), Frame
                         );
                     } else {
                         _cubesById[int.Parse(pos[0])].gameObject.transform.position = 
@@ -121,9 +121,9 @@ public class Slient : MonoBehaviour {
                 }
             }
             if(interPolationSteps <= 1){
-                bafer.removeFirst();
+                buf.removeFirst();
             }
-            Freim++;
+            Frame++;
         }
         // predecir a los demas
     }

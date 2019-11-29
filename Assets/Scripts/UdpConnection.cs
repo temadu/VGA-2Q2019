@@ -12,7 +12,7 @@ public class UdpConnection
     private UdpClient udpClient;
     
     public static int SEND_DELAY = 1;
-    public static double DROP_PROBABILITY = 0.1;
+    public static double DROP_PROBABILITY = 0.0;
  
     private readonly Queue<string> incomingQueue = new Queue<string>();
     Thread receiveThread;
@@ -122,7 +122,7 @@ public class UdpConnection
     private void SendMessageThreaded(UdpClient client, string message, IPEndPoint endpoint) {
         if(SEND_DELAY>0) Thread.Sleep(SEND_DELAY);
         Random random = new Random();
-        if (random.NextDouble() > DROP_PROBABILITY) return;
+        if (random.NextDouble() < DROP_PROBABILITY) return;
         Byte[] sendBytes = Encoding.UTF8.GetBytes(message);
         client.Send(sendBytes, sendBytes.Length, endpoint);
     }

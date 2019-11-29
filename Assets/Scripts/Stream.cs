@@ -5,27 +5,27 @@ using System.Runtime.ConstrainedExecution;
 using System;
 using UnityEngine;
 
-public class Strim {
+public class Stream {
 	private Dictionary<int, List<Action<string, long>>> _observers;
 	private Dictionary<int, List<Action<long, long>>> _ackObservers;
-	private List<Pucket> _puckets;
-	// private List<Pucket> _acks;
-	private bool _reliabilaite;
+	private List<Packet> _packets;
+	// private List<Packet> _acks;
+	private bool _reliability;
 	private bool client;
 
-	public Strim(bool realiabitiliy, bool client) {
+	public Stream(bool reliability, bool client) {
 		this.client = client;
-		_puckets = new List<Pucket>();
-		// _acks = new List<Pucket>();
+		_packets = new List<Packet>();
+		// _acks = new List<Packet>();
 		_observers = new Dictionary<int, List<Action<string, long>>>();
 		_ackObservers = new Dictionary<int, List<Action<long, long>>>();
-		_reliabilaite = realiabitiliy;
+		_reliability = reliability;
 	}
 	
-	public void ReceivePacket(Pucket p) {
+	public void ReceivePacket(Packet p) {
 		if (p.Ack) {
 			Debug.Log("Ack received, orderSent: " + p.Order + ", frameACK:" + p.Data);
-			_puckets = _puckets.Where(pq => pq.Order > long.Parse(p.Data)).ToList();
+			_packets = _packets.Where(pq => pq.Order > long.Parse(p.Data)).ToList();
 			if(!_ackObservers.ContainsKey(p.Topic)){
 				_ackObservers[p.Topic] = new List<Action<long, long>>();
 			}
@@ -38,15 +38,15 @@ public class Strim {
 		}
 	}
 
-	public Pucket CreatePacket(string data, int topic, bool ack=false) {
-		Pucket q = new Pucket(topic, client ? Slient.Freim: Cerver.Freim, data, ack);
+	public Packet CreatePacket(string data, int topic, bool ack=false) {
+		Packet q = new Packet(topic, client ? Client.Frame: Server.Frame, data, ack);
 		// if (ack) {
 		// 	_acks.Add(q);
 		// } else {
-		// 	_puckets.Add(q);
+		// 	_packets.Add(q);
 		// }
 		if(!ack){
-			_puckets.Add(q);
+			_packets.Add(q);
 		}
 
 		return q;
@@ -64,10 +64,11 @@ public class Strim {
 			_ackObservers[topic] = new List<Action<long, long>>();
 		}
 		_ackObservers[topic].Add(obs);
+		Debug.Log("ADDING ACK OBSERVER");
 	}
 
-	// public List<Pucket> GetPockets() {
-	// 	List<Pucket> aux = _acks.Concat(_puckets).ToList();
+	// public List<Packet> GetBufferElems() {
+	// 	List<Packet> aux = _acks.Concat(_packets).ToList();
 	// 	_acks.Clear();
 	// 	return aux;
 	// }

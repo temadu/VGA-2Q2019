@@ -3,18 +3,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Cerver : MonoBehaviour
+public class Server : MonoBehaviour
 {
-  public static long Freim = 0L;
+  public static long Frame = 0L;
   private GameObject[] _cubes;
   private Dictionary<int, GameObject> _cubesById;
-  private PacketPrusecor _pp = PacketPrusecor.Instance;
+  private PacketProcessor _pp = PacketProcessor.Instance;
   public GameObject playerPrefab;
   private int counter = 0;
   public bool client;
   private void Start()
   {
-  	_pp.initStrims(client);
+  	_pp.initStreams(client);
     _cubesById = new Dictionary<int, GameObject>();
     
     _cubes = GameObject.FindGameObjectsWithTag("Cubo");
@@ -32,7 +32,7 @@ public class Cerver : MonoBehaviour
     
 
    
-    _pp.SubscribeToTopic(Pucket.Login, (message, order) =>
+    _pp.SubscribeToTopic(Packet.Login, (message, order) =>
     {
       print("NEW USER");
       print(message);
@@ -57,9 +57,9 @@ public class Cerver : MonoBehaviour
       names = names.Remove(names.Length - 1);
 	    _pp.AddIp(counter, ipname[0]);
       //Ack
-      _pp.CreatePukcet(order.ToString(), Pucket.Login, counter, true);
-      _pp.CreatePukcet(counter.ToString(), Pucket.Logined, counter);
-      _pp.CreatePukcet((ids + '-' + names), Pucket.UpdatePlayersInfo);
+      _pp.CreatePacket(order.ToString(), Packet.Login, counter, true);
+      _pp.CreatePacket(counter.ToString(), Packet.Logined, counter);
+      _pp.CreatePacket((ids + '-' + names), Packet.UpdatePlayersInfo);
       });
     
   }
@@ -68,7 +68,7 @@ public class Cerver : MonoBehaviour
   {
     _pp.Update();
     
-    if (Freim % 10 == 0) {
+    if (Frame % 10 == 0) {
       string positions = "";
       foreach (var cube in _cubes) {
         Vector3 pos = cube.gameObject.transform.position;
@@ -76,9 +76,9 @@ public class Cerver : MonoBehaviour
         positions += cube.GetComponent<CubeClass>().Id + ";" + pos.x + ";" + pos.y + ";" + pos.z + ";" + rot.w +
                       ";" + rot.x + ";" + rot.y + ";" + rot.z + "\n";
       }
-      _pp.CreatePukcet(positions, Pucket.Snapshot);
+      _pp.CreatePacket(positions, Packet.Snapshot);
     }
-    Freim++;
+    Frame++;
     
   }
 }

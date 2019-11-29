@@ -4,35 +4,35 @@ using System.Runtime.ConstrainedExecution;
 using System;
 using UnityEngine;
 
-public class Bafer {
-    public class Pocket{
-        public long horder;
-        public string possisions;
+public class Buffer {
+    public class BufferElem{
+        public long order;
+        public string positions;
 
-        public Pocket(long o, string p) {
-            this.horder = o;
-            this.possisions = p;
+        public BufferElem(long o, string p) {
+            this.order = o;
+            this.positions = p;
         }
     }
-    private SortedList<long, Pocket> p;
+    private SortedList<long, BufferElem> p;
     public int size;
 
-    public Bafer(){
-        this.p = new SortedList<long, Pocket>();
+    public Buffer(){
+        this.p = new SortedList<long, BufferElem>();
     }
 
     public void add(long order, string message) {
-        p.Add(order, new Pocket(order, message));
+        p.Add(order, new BufferElem(order, message));
     }
 
-    public Pocket peak(){
+    public BufferElem peak(){
         if(p.Count != 0) {
             return p.Values[0];
         }
         return null;
     }
 
-    public Pocket peakEnd(){
+    public BufferElem peakEnd(){
         if(p.Count == 0) {
             return null;
         }

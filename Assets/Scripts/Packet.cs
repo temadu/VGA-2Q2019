@@ -1,6 +1,6 @@
 ﻿
 
-public class Pucket {
+public class Packet {
     public const int Snapshot = 0;
     public const int Input = 1;
     public const int Connection = 2;
@@ -15,7 +15,7 @@ public class Pucket {
     public long Order;
     public string Data;
 
-    public Pucket(int topic, long order, string data, bool ack) {
+    public Packet(int topic, long order, string data, bool ack) {
         Topic = topic;
         Order = order;
         Data = data;

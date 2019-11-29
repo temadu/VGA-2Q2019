@@ -14,7 +14,7 @@ public class MoveVehicle : MonoBehaviour
 
     public float speed = 0.05f;
 
-    private PacketPrusecor _pp = PacketPrusecor.Instance;
+    private PacketProcessor _pp = PacketProcessor.Instance;
     private CubeClass me;
 
     private Rigidbody rigidBody;
@@ -31,7 +31,7 @@ public class MoveVehicle : MonoBehaviour
 
     public void Start() { 
         this.rigidBody = GetComponent<Rigidbody>(); 
-        _pp.SubscribeToTopic(Pucket.Input, HandleUpdate);
+        _pp.SubscribeToTopic(Packet.Input, HandleUpdate);
         me = this.GetComponent<CubeClass>();
     }
 
@@ -56,6 +56,6 @@ public class MoveVehicle : MonoBehaviour
             }
             this.transform.position = this.transform.position + (movement * speed);
         }
-        _pp.CreatePukcet(order.ToString(), Pucket.Input, id, true);
+        _pp.CreatePacket(order.ToString(), Packet.Input, id, true);
     }
 }

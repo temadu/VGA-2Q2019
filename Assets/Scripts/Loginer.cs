@@ -8,7 +8,7 @@ using UnityEngine.Networking;
 
 public class Loginer : MonoBehaviour
 {
-  private PacketPrusecor _pp = PacketPrusecor.Instance;
+  private PacketProcessor _pp = PacketProcessor.Instance;
   public UnityEngine.UI.InputField serverIP;
   public string serverIPPreset = null;
   public UnityEngine.UI.InputField personalIP;
@@ -35,6 +35,6 @@ public class Loginer : MonoBehaviour
 
   public void Login(){
     Debug.Log("Sending LOGIN");
-    _pp.CreatePukcet(personalIP.text+";"+username.text, Pucket.Login);
+    _pp.CreatePacket(personalIP.text+";"+username.text, Packet.Login);
   }
 }
